@@ -200,42 +200,45 @@ export default function App() {
         noticesService.getAll(),
         recommendationsService.getAll(),
       ]);
-      if (supabaseNotices.length > 0) {
-        const mapped = supabaseNotices.map((n: any) => ({
-          id: n.id,
-          category: n.category,
-          categoryLabel: n.category_label || '',
-          title: n.title,
-          description: n.description || '',
-          date: n.date || '',
-          time: n.time || '',
-          author: n.author || '',
-          authorRole: n.author_role || undefined,
-          isCritical: n.is_critical || false,
-          image: n.image_url || undefined,
-          details: n.details || undefined,
-        })) as Notice[];
-        setNotices(mapped);
-      }
-      if (supabaseRecommendations.length > 0) {
-        const mapped = supabaseRecommendations.map((r: any) => ({
-          id: r.id,
-          apartment: r.apartment,
-          authorName: r.author_name || undefined,
-          authorAvatar: r.author_avatar || undefined,
-          providerName: r.provider_name || '',
-          category: r.category || 'OUTROS',
-          comment: r.comment || '',
-          rating: r.rating || 5,
-          image: r.image_url || undefined,
-          images: r.images || undefined,
-          link: r.link || undefined,
-          linkText: r.link_text || undefined,
-          phone: r.phone || undefined,
-          date: '',
-        })) as Recommendation[];
-        setRecommendations(mapped);
-      }
+      const mappedNotices = supabaseNotices.map((n: any) => ({
+        id: n.id,
+        category: n.category,
+        categoryLabel: n.category_label || '',
+        title: n.title,
+        description: n.description || '',
+        date: n.date || '',
+        time: n.time || '',
+        author: n.author || '',
+        authorRole: n.author_role || undefined,
+        isCritical: n.is_critical || false,
+        image: n.image_url || undefined,
+        details: n.details || undefined,
+      })) as Notice[];
+      setNotices(mappedNotices);
+      try {
+        localStorage.setItem('oslo_notices', JSON.stringify(mappedNotices));
+      } catch {}
+
+      const mappedRecs = supabaseRecommendations.map((r: any) => ({
+        id: r.id,
+        apartment: r.apartment,
+        authorName: r.author_name || undefined,
+        authorAvatar: r.author_avatar || undefined,
+        providerName: r.provider_name || '',
+        category: r.category || 'OUTROS',
+        comment: r.comment || '',
+        rating: r.rating || 5,
+        image: r.image_url || undefined,
+        images: r.images || undefined,
+        link: r.link || undefined,
+        linkText: r.link_text || undefined,
+        phone: r.phone || undefined,
+        date: '',
+      })) as Recommendation[];
+      setRecommendations(mappedRecs);
+      try {
+        localStorage.setItem('oslo_recommendations', JSON.stringify(mappedRecs));
+      } catch {}
     } catch (e) {
       console.error('Error fetching shared data', e);
     }
