@@ -1,0 +1,6 @@
+{
+  "name": "Oslo Residencial",
+  "description": "Portal de condomínio do Residencial Oslo com quadro de avisos, caixa do prédio, dashboard de morador, IndicaApt para recomendações de serviços e perfil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
