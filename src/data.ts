@@ -1,111 +1,8 @@
 import { Notice, Recommendation, PendingPayment, FinanceSummary, UserProfile } from './types';
 
-export const INITIAL_NOTICES: Notice[] = [
-  {
-    id: 'n1',
-    category: 'Manutenção',
-    categoryLabel: 'MANUTENÇÃO CRÍTICA',
-    title: 'Interrupção Programada no Abastecimento de Água',
-    description: 'Informamos que haverá uma manutenção preventiva no sistema de bombas da Torre A na próxima quarta-feira (25/10), das 13h às 17h. Recomendamos que os moradores se programem adequadamente.',
-    date: '25 Out, 13:00 - 17:00',
-    time: 'Hoje, 09:30',
-    author: 'Administração Oslo',
-    authorRole: 'Engenharia Predial',
-    isCritical: true,
-  },
-  {
-    id: 'n2',
-    category: 'Reuniões',
-    categoryLabel: 'ASSEMBLEIA',
-    title: 'Reunião Extraordinária: Novo Paisagismo',
-    description: 'Discussão sobre a revitalização das áreas comuns e jardins laterais do condomínio.',
-    date: '30 Out, 19:30',
-    time: '2 dias atrás',
-    author: 'Roberto Mendes',
-    authorRole: 'Síndico (Gestão 2023-2025)',
-    details: 'A pauta principal será a aprovação do orçamento para o novo projeto paisagístico da entrada e da área da piscina.',
-  },
-  {
-    id: 'n3',
-    category: 'Social',
-    categoryLabel: 'SOCIAL',
-    title: 'Evento de Halloween Kids',
-    description: 'Inscrições abertas para a festa de Halloween das crianças que ocorrerá no salão de festas no dia 31/10.',
-    date: '31 Out, 18:00',
-    time: 'Ontem',
-    author: 'Comissão de Eventos',
-    authorRole: 'Moradores Voluntários',
-  },
-  {
-    id: 'n4',
-    category: 'Segurança',
-    categoryLabel: 'SEGURANÇA',
-    title: 'Atualização de Segurança',
-    description: 'Novas regras para acesso de prestadores de serviços e entregadores na portaria do Residencial Oslo.',
-    date: 'Imediato',
-    time: '3 dias atrás',
-    author: 'Segurança Oslo',
-    authorRole: 'Portaria Blindada',
-  },
-  {
-    id: 'n5',
-    category: 'Social',
-    categoryLabel: 'SOCIAL',
-    title: 'Nova Horta Comunitária',
-    description: 'O projeto de sustentabilidade do Oslo está expandindo. Venha conhecer o novo espaço no terraço.',
-    date: '20 Out',
-    time: 'Publicado em 20 Out',
-    author: 'Comissão Verde',
-    authorRole: 'Sustentabilidade',
-    image: '/images/community_garden.jpg',
-  }
-];
+export const INITIAL_NOTICES: Notice[] = [];
 
-export const INITIAL_RECOMMENDATIONS: Recommendation[] = [
-  {
-    id: 'r1',
-    apartment: 'Apartamento 42',
-    authorName: 'Thiago Souza',
-    authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-    providerName: 'Marceneiro Silva',
-    category: 'MARCENARIA',
-    comment: 'Recomendo fortemente o serviço do Marceneiro Silva. Ele fez os armários da cozinha do meu apartamento e o acabamento ficou impecável. Pontual e muito cuidadoso com a limpeza.',
-    rating: 5,
-    image: '/images/kitchen_marcenaria.jpg',
-    link: '#',
-    linkText: 'Ver Perfil',
-    phone: '+55 11 99999-8888',
-    date: 'Postado há 2 horas'
-  },
-  {
-    id: 'r2',
-    apartment: 'Seu Apartamento (14)',
-    authorName: 'Elena Vardalos',
-    authorAvatar: '/images/profile_elena.jpg',
-    providerName: 'SmartHome Automação',
-    category: 'ELÉTRICA',
-    comment: 'Instalação de automação de luzes feita pelo pessoal da SmartHome. Trabalho rápido, limpo e explicaram tudo sobre o aplicativo. Recomendo para quem quer modernizar o apê.',
-    rating: 4,
-    image: '/images/light_automation.jpg',
-    phone: '+55 11 98888-7777',
-    date: 'Postado ontem'
-  },
-  {
-    id: 'r3',
-    apartment: 'Apartamento 102',
-    authorName: 'Camila Lima',
-    authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200',
-    providerName: 'Jardim Secreto',
-    category: 'PAISAGISMO',
-    comment: 'Contratei o Jardim Secreto para revitalizar minhas plantas da varanda. São especialistas e me deram dicas ótimas de rega e iluminação. O ambiente mudou completamente!',
-    rating: 5,
-    image: '/images/balcony_garden.jpg',
-    link: '#',
-    linkText: 'Site Oficial',
-    phone: '+55 11 97777-6666',
-    date: 'Postado há 2 dias'
-  }
-];
+export const INITIAL_RECOMMENDATIONS: Recommendation[] = [];
 
 export const INITIAL_PAYMENTS: PendingPayment[] = [
   {
@@ -186,11 +83,11 @@ export const INITIAL_FINANCIAL_SUMMARY: FinanceSummary = {
 };
 
 export const INITIAL_PROFILE: UserProfile = {
-  fullName: 'Elena Vardalos',
-  apartmentNumber: 'Apartamento 04',
+  fullName: '',
+  apartmentNumber: '',
   role: 'Morador',
-  avatar: '/images/profile_elena.jpg',
-  twoFactorEnabled: true,
+  avatar: '',
+  twoFactorEnabled: false,
   visibleToOthers: true,
   isAdmin: false,
 };
