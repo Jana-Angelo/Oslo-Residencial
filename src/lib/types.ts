@@ -97,6 +97,27 @@ export interface SyndicProfile {
   updated_at: string;
 }
 
+export interface Ocorrencia {
+  id: string;
+  description: string;
+  category: string;
+  status: string;
+  author_name: string;
+  apartment: string;
+  avatar_url: string | null;
+  images: string[];
+  likes: number;
+  liked_by: string[];
+  views: number;
+  viewed_by: string[];
+  comments: any[];
+  pinned: boolean;
+  highlighted: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface RegisteredUser {
   id: string;
   apartment_number: string;
@@ -147,6 +168,11 @@ export interface Database {
         Row: SyndicProfile;
         Insert: Omit<SyndicProfile, 'id' | 'updated_at'>;
         Update: Partial<Omit<SyndicProfile, 'id' | 'updated_at'>>;
+      };
+      ocorrencias: {
+        Row: Ocorrencia;
+        Insert: Omit<Ocorrencia, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Ocorrencia, 'id' | 'created_at' | 'updated_at'>>;
       };
       registered_users: {
         Row: RegisteredUser;

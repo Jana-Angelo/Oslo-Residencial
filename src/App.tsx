@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { Notice, Recommendation, PendingPayment, UserProfile, FinanceSummary } from './types';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
+import { Notice, Recommendation, PendingPayment, UserProfile, FinanceSummary, Ocorrencia, OcorrenciaComment } from './types';
 import { 
   INITIAL_NOTICES, 
   INITIAL_RECOMMENDATIONS, 
   INITIAL_PAYMENTS, 
   INITIAL_FINANCIAL_SUMMARY, 
-  INITIAL_PROFILE 
+  INITIAL_PROFILE,
+  INITIAL_OCORRENCIAS,
 } from './data';
 import { supabase } from './lib/supabaseClient';
 import {
@@ -18,17 +19,19 @@ import {
   monthlyFlowService,
   expenseCategoriesService,
   syndicProfileService,
+  ocorrenciasService,
 } from './lib/database';
 
 import LoginScreen from './components/LoginScreen';
 import DashboardScreen from './components/DashboardScreen';
 import CaixaScreen from './components/CaixaScreen';
 import AvisosScreen from './components/AvisosScreen';
+import OcorrenciasScreen from './components/OcorrenciasScreen';
 import IndicaAptScreen from './components/IndicaAptScreen';
 import PerfilScreen from './components/PerfilScreen';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil'>(() => {
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil' | 'ocorrencias'>(() => {
     try {
       const saved = localStorage.getItem('oslo_current_screen');
       if (saved) {
@@ -60,6 +63,15 @@ export default function App() {
     return INITIAL_RECOMMENDATIONS;
   });
   const [pendingPayments, setPendingPayments] = useState<PendingPayment[]>(INITIAL_PAYMENTS);
+  const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>(() => {
+    try {
+      const saved = localStorage.getItem('oslo_ocorrencias');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return INITIAL_OCORRENCIAS;
+  });
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     try {
       const saved = localStorage.getItem('oslo_current_user_profile');
@@ -93,6 +105,7 @@ export default function App() {
       if (session) {
         fetchProfile(session.user.id);
         fetchSharedData();
+        fetchOcorrencias();
         fetchFinancialData();
         fetchSyndicData();
         let screen: typeof currentScreen = 'dashboard';
@@ -113,6 +126,7 @@ export default function App() {
       if (session) {
         fetchProfile(session.user.id);
         fetchSharedData();
+        fetchOcorrencias();
         fetchFinancialData();
         fetchSyndicData();
         let screen: typeof currentScreen = 'dashboard';
@@ -177,7 +191,7 @@ export default function App() {
           ? `Apartamento ${perfilData.apartment_number}`
           : 'Desconhecido';
       
-      const profile = {
+      const profile: UserProfile = {
         fullName: perfilData.nome_completo || 'Sem Nome',
         email: session?.user?.email || '',
         apartmentNumber: aptNumber,
@@ -241,6 +255,47 @@ export default function App() {
       } catch {}
     } catch (e) {
       console.error('Error fetching shared data', e);
+    }
+  };
+
+  const fetchOcorrencias = async () => {
+    try {
+      const dbOcorrencias = await ocorrenciasService.getAll();
+      if (dbOcorrencias.length === 0) return;
+      const mapped = dbOcorrencias.map((o: any) => ({
+        id: o.id,
+        description: o.description || '',
+        category: o.category || 'Outros',
+        status: o.status || 'Aberta',
+        authorName: o.author_name || 'Morador',
+        apartment: o.apartment || 'Apartamento Desconhecido',
+        avatar: o.avatar_url || '',
+        images: o.images || [],
+        createdAt: o.created_at ? new Date(o.created_at).toISOString() : new Date().toISOString(),
+        likes: o.likes || 0,
+        likedBy: o.liked_by || [],
+        views: o.views || 0,
+        viewedBy: o.viewed_by || [],
+        comments: Array.isArray(o.comments)
+          ? o.comments.map((c: any) => ({
+              id: c.id,
+              authorName: c.authorName || c.author_name || 'Morador',
+              apartment: c.apartment || '',
+              avatar: c.avatar || '',
+              comment: c.comment || '',
+              createdAt: c.createdAt || c.created_at || new Date().toISOString(),
+            }))
+          : [],
+        pinned: !!o.pinned,
+        highlighted: !!o.highlighted,
+        authorUserId: o.created_by || undefined,
+      })) as Ocorrencia[];
+      setOcorrencias(mapped);
+      try {
+        localStorage.setItem('oslo_ocorrencias', JSON.stringify(mapped));
+      } catch {}
+    } catch (e) {
+      console.error('Error fetching ocorrências', e);
     }
   };
 
@@ -384,7 +439,7 @@ export default function App() {
   }, [currentScreen, isAdminUser]);
 
   const handleNavigate = (
-    screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil',
+    screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil' | 'ocorrencias',
     transition: 'none' | 'push' = 'none'
   ) => {
     if (screen === 'caixa' && !isAdminUser) {
@@ -526,6 +581,96 @@ export default function App() {
       console.error(e);
     }
     recommendationsService.delete(id).catch(console.error);
+  };
+
+  const persistOcorrencias = (updated: Ocorrencia[]) => {
+    setOcorrencias(updated);
+    try {
+      localStorage.setItem('oslo_ocorrencias', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleAddOcorrencia = (newOcc: Ocorrencia) => {
+    const updated = [newOcc, ...ocorrencias];
+    persistOcorrencias(updated);
+    ocorrenciasService.create({
+      description: newOcc.description,
+      category: newOcc.category,
+      status: newOcc.status,
+      author_name: newOcc.authorName,
+      apartment: newOcc.apartment,
+      avatar_url: newOcc.avatar || null,
+      images: newOcc.images || [],
+      likes: newOcc.likes,
+      liked_by: newOcc.likedBy || [],
+      views: newOcc.views || 0,
+      viewed_by: newOcc.viewedBy || [],
+      comments: [],
+      pinned: newOcc.pinned || false,
+      highlighted: newOcc.highlighted || false,
+      created_by: null,
+    }).catch(console.error);
+  };
+
+  const handleEditOcorrencia = (updatedOcc: Ocorrencia) => {
+    const updated = ocorrencias.map(o => o.id === updatedOcc.id ? updatedOcc : o);
+    persistOcorrencias(updated);
+    ocorrenciasService.update(updatedOcc.id, {
+      description: updatedOcc.description,
+      category: updatedOcc.category,
+      status: updatedOcc.status,
+      images: updatedOcc.images || [],
+      pinned: updatedOcc.pinned,
+      highlighted: updatedOcc.highlighted,
+    }).catch(console.error);
+  };
+
+  const handleDeleteOcorrencia = (id: string) => {
+    const updated = ocorrencias.filter(o => o.id !== id);
+    persistOcorrencias(updated);
+    ocorrenciasService.delete(id).catch(console.error);
+  };
+
+  const handleToggleOcorrenciaLike = (id: string) => {
+    const target = ocorrencias.find(o => o.id === id);
+    if (!target) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const already = target.likedBy.includes(userKey);
+    const newLikedBy = already
+      ? target.likedBy.filter(k => k !== userKey)
+      : [...target.likedBy, userKey];
+    const newLikes = already ? Math.max(0, target.likes - 1) : target.likes + 1;
+    persistOcorrencias(ocorrencias.map(o => o.id === id ? { ...o, likedBy: newLikedBy, likes: newLikes } : o));
+    ocorrenciasService.update(id, { likes: newLikes, liked_by: newLikedBy }).catch(console.error);
+  };
+
+  const handleIncrementOcorrenciaViews = (ids: string[]) => {
+    if (ids.length === 0) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const idSet = new Set(ids);
+    const updated = ocorrencias.map(o =>
+      idSet.has(o.id) && !o.viewedBy.includes(userKey)
+        ? { ...o, viewedBy: [...o.viewedBy, userKey], views: o.views + 1 }
+        : o
+    );
+    persistOcorrencias(updated);
+    ids.forEach(id => {
+      const prev = ocorrencias.find(o => o.id === id);
+      const occ = updated.find(o => o.id === id);
+      if (occ && prev && !prev.viewedBy.includes(userKey) && occ.viewedBy.includes(userKey)) {
+        ocorrenciasService.update(id, { views: occ.views, viewed_by: occ.viewedBy }).catch(console.error);
+      }
+    });
+  };
+
+  const handleAddOcorrenciaComment = (id: string, comment: OcorrenciaComment) => {
+    const target = ocorrencias.find(o => o.id === id);
+    if (!target) return;
+    const newComments = [...target.comments, comment];
+    persistOcorrencias(ocorrencias.map(o => o.id === id ? { ...o, comments: newComments } : o));
+    ocorrenciasService.update(id, { comments: newComments }).catch(console.error);
   };
 
   // Caixa/Financeiro handlers
@@ -712,6 +857,7 @@ export default function App() {
   };
 
   const handleUpdateProfile = (updatedProfile: UserProfile) => {
+    const prevApartment = userProfile.apartmentNumber;
     setUserProfile(updatedProfile);
     try {
       localStorage.setItem('oslo_current_user_profile', JSON.stringify(updatedProfile));
@@ -754,6 +900,9 @@ export default function App() {
       const savedAdmins = localStorage.getItem('oslo_admin_apartments');
       let admins: string[] = savedAdmins ? JSON.parse(savedAdmins) : [];
       if (updatedProfile.isAdmin) {
+        if (prevApartment && prevApartment !== updatedProfile.apartmentNumber) {
+          admins = admins.filter(apt => apt !== prevApartment);
+        }
         if (!admins.includes(updatedProfile.apartmentNumber)) {
           admins.push(updatedProfile.apartmentNumber);
         }
@@ -767,7 +916,7 @@ export default function App() {
   };
 
   // Animation variants
-  const variants = {
+  const variants: Variants = {
     initial: (custom: 'none' | 'push') => ({
       opacity: 0,
       x: custom === 'push' ? '100%' : 0,
@@ -857,6 +1006,21 @@ export default function App() {
               onDeleteNotice={handleDeleteNotice}
               isAdmin={isAdminUser}
               onNavigate={handleNavigate}
+            />
+          )}
+
+          {currentScreen === 'ocorrencias' && (
+            <OcorrenciasScreen
+              ocorrencias={ocorrencias}
+              userProfile={userProfile}
+              isAdmin={isAdminUser}
+              onNavigate={handleNavigate}
+              onAddOcorrencia={handleAddOcorrencia}
+              onEditOcorrencia={handleEditOcorrencia}
+              onDeleteOcorrencia={handleDeleteOcorrencia}
+              onToggleLike={handleToggleOcorrenciaLike}
+              onIncrementViews={handleIncrementOcorrenciaViews}
+              onAddComment={handleAddOcorrenciaComment}
             />
           )}
 

@@ -20,7 +20,8 @@ import {
   LogOut,
   Pencil,
   Phone,
-  Upload
+  Upload,
+  Megaphone,
 } from 'lucide-react';
 import { Notice } from '../types';
 import { syndicProfileService } from '../lib/database';
@@ -35,7 +36,7 @@ interface DashboardScreenProps {
     role: string;
     isAdmin?: boolean;
   };
-  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
+  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
   notices: Notice[];
   syndicData: { name: string; period: string; quote: string; avatar: string };
   syndicWhatsapp: string;
@@ -272,6 +273,14 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
           >
             <FileText className="w-4 h-4 text-[#8C7364]" />
             <span>Avisos</span>
+          </button>
+
+          <button 
+            onClick={() => onNavigate('ocorrencias', 'none')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+          >
+            <Megaphone className="w-4 h-4 text-[#8C7364]" />
+            <span>Ocorrências</span>
           </button>
 
           <button 
@@ -581,6 +590,14 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
                 </button>
 
                 <button 
+                  onClick={() => { onNavigate('ocorrencias', 'none'); setIsDrawerOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
+                >
+                  <Megaphone className="w-4 h-4 text-[#8C7364]" />
+                  <span>Ocorrências</span>
+                </button>
+
+                <button 
                   onClick={() => { onNavigate('indica_apt', 'none'); setIsDrawerOpen(false); }}
                   className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
                 >
@@ -622,7 +639,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
       )}
 
       {/* Bottom Nav Footer for Mobile screens (Dashboard/Resident contexts) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
         <button 
           onClick={() => onNavigate('dashboard', 'none')}
           className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
@@ -637,6 +654,14 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
         >
           <Bell className="w-5 h-5" />
           <span className="text-[10px] font-bold">Avisos</span>
+        </button>
+ 
+        <button 
+          onClick={() => onNavigate('ocorrencias', 'none')}
+          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
+        >
+          <Megaphone className="w-5 h-5" />
+          <span className="text-[10px] font-bold">Ocorrências</span>
         </button>
  
         <button 

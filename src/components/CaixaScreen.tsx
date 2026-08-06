@@ -21,14 +21,15 @@ import {
   Trash2,
   X,
   Check,
-  Save
+  Save,
+  Megaphone,
 } from 'lucide-react';
 import { FinanceSummary, PendingPayment } from '../types';
 
 interface CaixaScreenProps {
   financeSummary: FinanceSummary;
   pendingPayments: PendingPayment[];
-  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
+  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
   onEditPayment: (payment: PendingPayment) => void;
   onDeletePayment: (id: string) => void;
   onUpdateFinanceSummary: (updated: Partial<FinanceSummary>) => void;
@@ -334,6 +335,14 @@ export default function CaixaScreen({
           >
             <FileText className="w-4 h-4 text-[#8C7364]" />
             <span>Avisos</span>
+          </button>
+
+          <button 
+            onClick={() => onNavigate('ocorrencias', 'none')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+          >
+            <Megaphone className="w-4 h-4 text-[#8C7364]" />
+            <span>Ocorrências</span>
           </button>
 
           <button 
@@ -671,7 +680,7 @@ export default function CaixaScreen({
                         </span>
 
                         {/* Edit/Delete buttons on hover */}
-                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           <button 
                             onClick={() => handleStartEditFlow(index)}
                             className="p-1 text-[#8C7364] hover:bg-[#F5F2EB] rounded-md transition-colors cursor-pointer"
@@ -762,14 +771,14 @@ export default function CaixaScreen({
                         <span className="font-bold text-[#8C7364]">{expense.percentage}%</span>
                         <button 
                           onClick={() => handleStartEditExpense(idx)}
-                          className="p-1 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                          className="p-1 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors cursor-pointer md:opacity-0 md:group-hover:opacity-100"
                           title="Editar categoria"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
                         <button 
                           onClick={() => setDeleteExpenseIdx(idx)}
-                          className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                          className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer md:opacity-0 md:group-hover:opacity-100"
                           title="Excluir categoria"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -988,7 +997,7 @@ export default function CaixaScreen({
       </main>
 
       {/* Footer Nav for Mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
         <button 
           onClick={() => onNavigate('dashboard', 'none')}
           className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
@@ -1003,6 +1012,14 @@ export default function CaixaScreen({
         >
           <Bell className="w-5 h-5" />
           <span className="text-[10px] font-bold">Avisos</span>
+        </button>
+
+        <button 
+          onClick={() => onNavigate('ocorrencias', 'none')}
+          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
+        >
+          <Megaphone className="w-5 h-5" />
+          <span className="text-[10px] font-bold">Ocorrências</span>
         </button>
 
         <button 

@@ -18,7 +18,9 @@ import {
   ArrowLeft,
   Image as ImageIcon,
   Link as LinkIcon,
-  Send
+  Send,
+  Megaphone,
+  CreditCard,
 } from 'lucide-react';
 import { Recommendation, UserProfile } from '../types';
 import { storageService } from '../lib/storage';
@@ -29,7 +31,7 @@ interface IndicaAptScreenProps {
   onAddRecommendation: (rec: Recommendation) => void;
   onEditRecommendation: (rec: Recommendation) => void;
   onDeleteRecommendation: (id: string) => void;
-  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
+  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
 }
 
 export default function IndicaAptScreen({ 
@@ -47,6 +49,8 @@ export default function IndicaAptScreen({
   const [activeFilter, setActiveFilter] = useState('TODOS');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const commentFileInputRef = useRef<HTMLInputElement>(null);
+
+  const isAdmin = userProfile.isAdmin !== false && (userProfile.role === 'Administrador' || userProfile.role === 'Síndico' || userProfile.isAdmin === true);
 
   // New recommendation states
   const [providerName, setProviderName] = useState('');
@@ -252,6 +256,14 @@ export default function IndicaAptScreen({
           </button>
 
           <button 
+            onClick={() => onNavigate('ocorrencias', 'none')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+          >
+            <Megaphone className="w-4 h-4 text-[#8C7364]" />
+            <span>Ocorrências</span>
+          </button>
+
+          <button 
             onClick={() => onNavigate('indica_apt', 'none')}
             className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
           >
@@ -266,6 +278,16 @@ export default function IndicaAptScreen({
             <User className="w-4 h-4 text-[#8C7364]" />
             <span>Perfil</span>
           </button>
+
+          {isAdmin && (
+            <button 
+              onClick={() => onNavigate('caixa', 'push')}
+              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+            >
+              <CreditCard className="w-4 h-4 text-[#8C7364]" />
+              <span>Caixa do Prédio</span>
+            </button>
+          )}
         </nav>
 
         <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
@@ -280,7 +302,7 @@ export default function IndicaAptScreen({
       </aside>
 
       {/* Main Content feed */}
-      <main className="flex-1 p-4 md:p-8 max-w-xl mx-auto w-full space-y-6">
+      <main className="flex-1 p-4 md:p-8 max-w-[860px] mx-auto w-full space-y-[18px]">
         
         {/* Search and Filters */}
         <div className="space-y-4">
@@ -330,7 +352,7 @@ export default function IndicaAptScreen({
         </div>
 
         {/* Feed Cards list */}
-        <div className="space-y-6">
+        <div className="space-y-[18px]">
           <AnimatePresence mode="popLayout">
             {filteredRecs.map((rec) => {
               const isOwner = rec.apartment === userProfile.apartmentNumber || rec.authorName === userProfile.fullName;
@@ -343,10 +365,10 @@ export default function IndicaAptScreen({
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white border border-[#EAE3D5] rounded-2xl overflow-hidden shadow-xs space-y-4"
+                  className="bg-white border-[1px] border-[#EAE3D5] rounded-[18px] overflow-hidden min-h-[220px] shadow-[0_8px_30px_rgba(0,0,0,0.05)] space-y-4"
                 >
                   {/* User post header */}
-                  <div className="p-4 flex items-center justify-between border-b border-[#F5F2EB]">
+                  <div className="px-5 pt-5 pb-4 flex items-center justify-between border-b border-[#F5F2EB]">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden border border-[#EAE3D5] bg-[#F5F2EB]">
                         {rec.authorAvatar ? (
@@ -405,7 +427,7 @@ export default function IndicaAptScreen({
                   ) : null}
 
                   {/* Text Details & Rating */}
-                  <div className="px-4 pb-5 pt-1 space-y-4">
+                  <div className="px-5 pb-5 pt-1 space-y-4">
                     
                     <div className="flex items-center justify-between">
                       {/* Star Rating */}
@@ -684,7 +706,7 @@ export default function IndicaAptScreen({
       )}
 
       {/* Bottom Nav / Footer Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
         
         <button 
           onClick={() => onNavigate('dashboard', 'none')}
@@ -700,6 +722,14 @@ export default function IndicaAptScreen({
         >
           <Bell className="w-5 h-5" />
           <span className="text-[10px] font-bold">Avisos</span>
+        </button>
+
+        <button 
+          onClick={() => onNavigate('ocorrencias', 'none')}
+          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
+        >
+          <Megaphone className="w-5 h-5" />
+          <span className="text-[10px] font-bold">Ocorrências</span>
         </button>
 
         <button 

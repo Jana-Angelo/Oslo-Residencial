@@ -2,6 +2,7 @@ import { supabase } from './supabaseClient';
 
 const BUCKET_AVATARS = 'avatars';
 const BUCKET_RECOMMENDATIONS = 'recomendacoes';
+const BUCKET_OCORRENCIAS = 'ocorrencias';
 
 function compressImage(file: File, maxDim = 800, quality = 0.8): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -95,6 +96,44 @@ export const storageService = {
     const { error } = await supabase.storage.from(BUCKET_RECOMMENDATIONS).remove([path]);
     if (error) {
       console.error('Erro ao deletar imagem de recomendação:', error);
+      return false;
+    }
+    return true;
+  },
+
+  async uploadOcorrenciaImage(file: File): Promise<string> {
+    const blob = await compressImage(file, 1200, 0.8);
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from(BUCKET_OCORRENCIAS)
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+
+    if (error) {
+      throw new Error(`Falha no upload da imagem: ${error.message}`);
+    }
+
+    const { data } = supabase.storage.from(BUCKET_OCORRENCIAS).getPublicUrl(path);
+    if (!data?.publicUrl) {
+      throw new Error('Falha ao obter URL pública da imagem');
+    }
+    return data.publicUrl;
+  },
+
+  async uploadOcorrenciaImages(files: File[]): Promise<string[]> {
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await this.uploadOcorrenciaImage(file);
+      urls.push(url);
+    }
+    return urls;
+  },
+
+  async deleteOcorrenciaImage(path: string): Promise<boolean> {
+    const { error } = await supabase.storage.from(BUCKET_OCORRENCIAS).remove([path]);
+    if (error) {
+      console.error('Erro ao deletar imagem de ocorrência:', error);
       return false;
     }
     return true;

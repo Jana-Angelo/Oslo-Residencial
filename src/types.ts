@@ -1,6 +1,6 @@
 export interface Notice {
   id: string;
-  category: 'Manutenção' | 'Reuniões' | 'Segurança' | 'Social';
+  category: string;
   categoryLabel: string;
   title: string;
   description: string;
@@ -63,4 +63,35 @@ export interface UserProfile {
   twoFactorEnabled: boolean;
   visibleToOthers: boolean;
   isAdmin?: boolean;
+}
+
+export type OcorrenciaStatus = 'Aberta' | 'Em análise' | 'Resolvida';
+
+export interface OcorrenciaComment {
+  id: string;
+  authorName: string;
+  apartment: string;
+  avatar: string;
+  comment: string;
+  createdAt: string;
+}
+
+export interface Ocorrencia {
+  id: string;
+  description: string;
+  category: string;
+  status: OcorrenciaStatus;
+  authorName: string;
+  apartment: string;
+  avatar: string;
+  createdAt: string;
+  likes: number;
+  likedBy: string[];
+  views: number;
+  viewedBy: string[];
+  comments: OcorrenciaComment[];
+  pinned: boolean;
+  highlighted: boolean;
+  images: string[];
+  authorUserId?: string;
 }
