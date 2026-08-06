@@ -7,6 +7,7 @@ import type {
   MonthlyFlow,
   ExpenseCategory,
   SyndicProfile,
+  Ocorrencia,
 } from './types';
 
 // =====================================================
@@ -486,6 +487,80 @@ export const syndicProfileService = {
 };
 
 // =====================================================
+// SERVIÇO: Ocorrências
+// =====================================================
+export const ocorrenciasService = {
+  async getAll(): Promise<Ocorrencia[]> {
+    const { data, error } = await supabase
+      .from('ocorrencias')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Erro ao buscar ocorrências:', error);
+      return [];
+    }
+    return data || [];
+  },
+
+  async getById(id: string): Promise<Ocorrencia | null> {
+    const { data, error } = await supabase
+      .from('ocorrencias')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Erro ao buscar ocorrência:', error);
+      return null;
+    }
+    return data;
+  },
+
+  async create(ocorrencia: Omit<Ocorrencia, 'id' | 'created_at' | 'updated_at'>): Promise<Ocorrencia | null> {
+    const { data, error } = await supabase
+      .from('ocorrencias')
+      .insert(ocorrencia)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao criar ocorrência:', error);
+      return null;
+    }
+    return data;
+  },
+
+  async update(id: string, updates: Partial<Ocorrencia>): Promise<Ocorrencia | null> {
+    const { data, error } = await supabase
+      .from('ocorrencias')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar ocorrência:', error);
+      return null;
+    }
+    return data;
+  },
+
+  async delete(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ocorrencias')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao deletar ocorrência:', error);
+      return false;
+    }
+    return true;
+  },
+};
+
+// =====================================================
 // SERVIÇO: Autenticação (Supabase Auth)
 // =====================================================
 export const authService = {
@@ -680,5 +755,6 @@ export const db = {
   monthlyFlow: monthlyFlowService,
   expenseCategories: expenseCategoriesService,
   syndicProfile: syndicProfileService,
+  ocorrencias: ocorrenciasService,
   auth: authService,
 };

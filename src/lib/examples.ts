@@ -45,9 +45,9 @@ async function createNotice() {
 // EXEMPLO 3: Buscar perfil por apartamento
 // =====================================================
 async function fetchProfile(apartmentNumber: string) {
-  const profile = await db.profiles.getByApartment(apartmentNumber);
-  console.log('Perfil:', profile);
-  return profile;
+  const session = await db.auth.getSession();
+  console.log('Sessão atual:', session.data.session?.user?.email);
+  return session;
 }
 
 // =====================================================
@@ -110,22 +110,22 @@ async function createRecommendation() {
 // EXEMPLO 8: Login do usuário
 // =====================================================
 async function login(apartmentNumber: string, password: string) {
-  const profile = await db.auth.signIn(apartmentNumber, password);
-  if (profile) {
-    console.log('Login bem-sucedido:', profile.full_name);
+  const result = await db.auth.signIn(apartmentNumber, password);
+  if (result.user) {
+    console.log('Login bem-sucedido:', result.user.user_metadata?.full_name);
   } else {
     console.log('Credenciais inválidas');
   }
-  return profile;
+  return result;
 }
 
 // =====================================================
 // EXEMPLO 9: Cadastro de novo usuário
 // =====================================================
 async function register(apartmentNumber: string, password: string, fullName: string) {
-  const profile = await db.auth.signUp(apartmentNumber, password, fullName);
-  if (profile) {
-    console.log('Cadastro realizado:', profile.full_name);
+  const profile = await db.auth.signUp(apartmentNumber, password, fullName, '');
+  if (profile.user) {
+    console.log('Cadastro realizado:', profile.user.user_metadata?.full_name);
   } else {
     console.log('Apartamento já cadastrado');
   }

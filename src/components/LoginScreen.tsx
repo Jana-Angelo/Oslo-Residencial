@@ -11,13 +11,50 @@ import {
   CheckCircle2, 
   Loader2,
   ArrowRight,
-  Building2
 } from 'lucide-react';
 import { APARTMENT_OPTIONS } from '../data';
 import { authService } from '../lib/database';
 
 interface LoginScreenProps {
   onLogin: () => void;
+}
+
+function BuildingIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M2 1H22M2 7H22M2 13H22M2 23H22M2 1V23M22 1V23" />
+      <rect x="4.5" y="17.5" width="2.5" height="5.5" stroke="currentColor" fill="none" />
+      <rect x="12" y="16.5" width="8" height="6.5" fill="currentColor" stroke="none" />
+      <rect x="5.5" y="4.5" width="2.5" height="2" />
+      <rect x="5.5" y="10.5" width="2.5" height="2" />
+      <rect x="16.5" y="4.5" width="2.5" height="2" />
+      <rect x="16.5" y="10.5" width="2.5" height="2" />
+      <rect x="19.5" y="7.5" width="0.75" height="1.5" fill="currentColor" stroke="none" />
+      <rect x="10.5" y="3.5" width="3" height="3" />
+      <line x1="12" y1="3.5" x2="12" y2="6.5" />
+      <rect x="9.5" y="6.5" width="5" height="2" />
+      <line x1="10.5" y1="6.5" x2="10.5" y2="8.5" />
+      <line x1="12" y1="6.5" x2="12" y2="8.5" />
+      <line x1="13.5" y1="6.5" x2="13.5" y2="8.5" />
+      <rect x="10.5" y="9.5" width="3" height="3" />
+      <line x1="12" y1="9.5" x2="12" y2="12.5" />
+      <rect x="9.5" y="12.5" width="5" height="2" />
+      <line x1="10.5" y1="12.5" x2="10.5" y2="14.5" />
+      <line x1="12" y1="12.5" x2="12" y2="14.5" />
+      <line x1="13.5" y1="12.5" x2="13.5" y2="14.5" />
+    </svg>
+  );
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
@@ -49,6 +86,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [regSuccess, setRegSuccess] = useState(false);
   const [regError, setRegError] = useState('');
   const [isRegDropdownOpen, setIsRegDropdownOpen] = useState(false);
+  const [regNeedsConfirmation, setRegNeedsConfirmation] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +124,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       const msg = err?.message || '';
       if (msg.includes('Invalid login credentials')) {
         setError('E-mail ou senha incorretos.');
+      } else if (msg.includes('not confirmed') || msg.includes('confirmation')) {
+        setError('Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada (e o spam) e clique no link de confirmação recebido.');
       } else {
         setError('Erro ao acessar. Tente novamente.');
       }
@@ -123,8 +163,9 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
     setRegLoading(true);
     try {
-      await authService.signUp(regEmail, regPassword, regEmail, regApartment);
+      const result = await authService.signUp(regEmail, regPassword, regEmail, regApartment);
       setRegLoading(false);
+      setRegNeedsConfirmation(!result?.session);
       setRegSuccess(true);
     } catch (err: any) {
       setRegLoading(false);
@@ -141,7 +182,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     <div 
       className="relative min-h-screen flex items-center justify-center p-4 bg-cover bg-center overflow-x-hidden"
       style={{ 
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.55)), url('/images/oslo_facade.jpg')`
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.55)), url('https://rrjtznwdisrmejraxhgn.supabase.co/storage/v1/object/public/arquivos_condominio/oslo_real_facade.jpg.png')`
       }}
     >
       <motion.div 
@@ -153,7 +194,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Header / Logo */}
         <div className="flex flex-col items-center mb-8 text-center">
           <div className="w-14 h-14 bg-[#8C7364] text-white rounded-full flex items-center justify-center mb-4 shadow-lg">
-            <Building2 className="w-7 h-7" />
+            <BuildingIcon className="w-7 h-7" />
           </div>
           <h1 className="text-3xl font-bold text-[#3E342F] tracking-tight font-display">
             Oslo Residencial
@@ -263,6 +304,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             onClick={() => {
               setIsRegisterOpen(true);
               setRegSuccess(false);
+              setRegNeedsConfirmation(false);
               setRegEmail('');
               setRegApartment('');
               setRegPassword('');
@@ -348,7 +390,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                           className="w-full pl-11 pr-10 py-3.5 bg-[#F5F2EB] border border-[#E5DFD5] rounded-xl text-[#3E342F] font-medium focus:outline-none focus:ring-2 focus:ring-[#8C7364]/20 focus:border-[#8C7364] transition-all text-sm text-left flex items-center justify-between cursor-pointer"
                         >
                           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C7364] z-10">
-                            <Building2 className="w-5 h-5" />
+                            <BuildingIcon className="w-5 h-5" />
                           </span>
                           <span>{regApartment || 'Selecione o Apartamento...'}</span>
                           <span className="text-[#8C7364] text-[10px] font-bold transition-transform duration-200" style={{ transform: isRegDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
@@ -457,7 +499,15 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   </div>
                   <h3 className="text-xl font-bold text-[#3E342F] mb-2">Cadastro Realizado!</h3>
                   <p className="text-sm text-[#8C7364] max-w-sm mb-6 leading-relaxed">
-                    Seu cadastro para o <strong className="text-[#3E342F]">{regApartment}</strong> foi concluído com sucesso. Agora você já pode acessar o portal utilizando sua nova senha!
+                    {regNeedsConfirmation ? (
+                      <>
+                        Seu cadastro para o <strong className="text-[#3E342F]">{regApartment}</strong> foi concluído! Enviamos um link de confirmação para o seu e-mail. Clique no link para ativar seu acesso e depois faça login.
+                      </>
+                    ) : (
+                      <>
+                        Seu cadastro para o <strong className="text-[#3E342F]">{regApartment}</strong> foi concluído com sucesso. Agora você já pode acessar o portal utilizando sua nova senha!
+                      </>
+                    )}
                   </p>
                   <button
                     onClick={() => {

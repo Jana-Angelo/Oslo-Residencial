@@ -20,7 +20,9 @@ import {
   ArrowLeft,
   Pencil,
   Trash2,
-  Search
+  Search,
+  Megaphone,
+  CreditCard,
 } from 'lucide-react';
 import { Notice } from '../types';
 
@@ -30,7 +32,7 @@ interface AvisosScreenProps {
   onEditNotice?: (notice: Notice) => void;
   onDeleteNotice?: (id: string) => void;
   isAdmin?: boolean;
-  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
+  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
 }
 
 export default function AvisosScreen({ 
@@ -210,6 +212,14 @@ export default function AvisosScreen({
           </button>
 
           <button 
+            onClick={() => onNavigate('ocorrencias', 'none')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+          >
+            <Megaphone className="w-4 h-4 text-[#8C7364]" />
+            <span>Ocorrências</span>
+          </button>
+
+          <button 
             onClick={() => onNavigate('indica_apt', 'none')}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
           >
@@ -224,6 +234,16 @@ export default function AvisosScreen({
             <User className="w-4 h-4 text-[#8C7364]" />
             <span>Perfil</span>
           </button>
+
+          {isAdmin && (
+            <button 
+              onClick={() => onNavigate('caixa', 'push')}
+              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+            >
+              <CreditCard className="w-4 h-4 text-[#8C7364]" />
+              <span>Caixa do Prédio</span>
+            </button>
+          )}
         </nav>
 
         <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
@@ -238,7 +258,7 @@ export default function AvisosScreen({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 max-w-2xl mx-auto w-full space-y-5">
+      <main className="flex-1 p-4 md:p-8 max-w-[860px] mx-auto w-full space-y-[18px]">
         
         {/* Action Button: "+ Novo Comunicado" */}
         <div className="flex justify-between items-center">
@@ -312,7 +332,7 @@ export default function AvisosScreen({
         </div>
 
         {/* Notices Stack */}
-        <div className="space-y-4">
+        <div className="space-y-[18px]">
           <AnimatePresence mode="popLayout">
             {filteredNotices.map((notice) => {
               const isExpanded = expandedNoticeId === notice.id;
@@ -324,8 +344,8 @@ export default function AvisosScreen({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className={`bg-white border rounded-2xl overflow-hidden shadow-xs transition-all ${
-                    notice.isCritical ? 'border-amber-200 shadow-md' : 'border-[#EAE3D5]'
+                  className={`bg-white border-[1px] min-h-[220px] rounded-[18px] overflow-hidden transition-all shadow-[0_8px_30px_rgba(0,0,0,0.05)] ${
+                    notice.isCritical ? 'border-amber-200' : 'border-[#EAE3D5]'
                   }`}
                 >
                   {/* Banner Image if exists */}
@@ -605,7 +625,7 @@ export default function AvisosScreen({
       {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'Início')]/.. */}
       {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'IndicaApt')]/.. */}
       {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'Perfil')]/.. */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
         
         <button 
           onClick={() => onNavigate('dashboard', 'none')}
@@ -621,6 +641,14 @@ export default function AvisosScreen({
         >
           <Bell className="w-5 h-5" />
           <span className="text-[10px] font-bold">Avisos</span>
+        </button>
+
+        <button 
+          onClick={() => onNavigate('ocorrencias', 'none')}
+          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
+        >
+          <Megaphone className="w-5 h-5" />
+          <span className="text-[10px] font-bold">Ocorrências</span>
         </button>
 
         <button 

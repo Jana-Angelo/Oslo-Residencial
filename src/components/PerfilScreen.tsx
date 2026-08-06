@@ -16,7 +16,9 @@ import {
   AlertTriangle,
   LogOut,
   ArrowLeft,
-  X
+  X,
+  Megaphone,
+  CreditCard,
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { APARTMENT_OPTIONS } from '../data';
@@ -27,7 +29,7 @@ import { storageService } from '../lib/storage';
 interface PerfilScreenProps {
   userProfile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
-  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
+  onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
 }
 
 export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate }: PerfilScreenProps) {
@@ -42,6 +44,11 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [popupError, setPopupError] = useState('');
   const [popupSuccess, setPopupSuccess] = useState('');
+
+  // Admin Activation Confirmation Popup States
+  const [isAdminConfirmOpen, setIsAdminConfirmOpen] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminConfirmError, setAdminConfirmError] = useState('');
 
   const [twoFactor, setTwoFactor] = useState(userProfile.twoFactorEnabled);
   const [visibleToOthers, setVisibleToOthers] = useState(userProfile.visibleToOthers);
@@ -79,17 +86,63 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
     return [];
   };
 
-  const handleToggleAdmin = () => {
+  const hasOtherSyndic = async (): Promise<boolean> => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        const { data } = await supabase
+          .from('perfis')
+          .select('id')
+          .in('tipo_perfil', ['sindico', 'admin']);
+        return (data || []).some((p) => p.id !== session.user.id);
+      }
+    } catch {
+      // ignore
+    }
+    const admins = getAdminApartments();
+    return admins.filter(apt => apt !== apartmentNumber).length > 0;
+  };
+
+  const handleToggleAdmin = async () => {
     const nextValue = !isAdmin;
-    if (nextValue) {
-      const admins = getAdminApartments();
-      const otherAdmins = admins.filter(apt => apt !== apartmentNumber);
-      if (otherAdmins.length > 0) {
-        setErrorMsg('Já existe sindico cadastrado.');
+    if (!nextValue) {
+      setIsAdmin(false);
+      return;
+    }
+    if (await hasOtherSyndic()) {
+      setErrorMsg('Já existe sindico cadastrado.');
+      return;
+    }
+    setAdminConfirmError('');
+    setAdminPassword('');
+    setIsAdminConfirmOpen(true);
+  };
+
+  const handleConfirmAdminPassword = async () => {
+    if (!adminPassword) {
+      setAdminConfirmError('Digite sua senha para confirmar.');
+      return;
+    }
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.email) {
+        setIsAdmin(true);
+        setIsAdminConfirmOpen(false);
         return;
       }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: session.user.email,
+        password: adminPassword,
+      });
+      if (error) {
+        setAdminConfirmError('Senha incorreta. Tente novamente.');
+        return;
+      }
+      setIsAdmin(true);
+      setIsAdminConfirmOpen(false);
+    } catch {
+      setAdminConfirmError('Erro ao validar a senha. Tente novamente.');
     }
-    setIsAdmin(nextValue);
   };
 
   const handleUploadClick = () => {
@@ -144,26 +197,10 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
     e.preventDefault();
     setErrorMsg('');
 
-    if (isAdmin) {
-      const admins = getAdminApartments();
-      const otherAdmins = admins.filter(apt => apt !== apartmentNumber);
-      if (otherAdmins.length > 0) {
-        setErrorMsg('Já existe sindico cadastrado.');
-        return;
-      }
+    if (isAdmin && (await hasOtherSyndic())) {
+      setErrorMsg('Já existe sindico cadastrado.');
+      return;
     }
-
-    onUpdateProfile({
-      ...userProfile,
-      fullName,
-      email,
-      apartmentNumber,
-      avatar,
-      twoFactorEnabled: twoFactor,
-      visibleToOthers: visibleToOthers,
-      isAdmin,
-      role: isAdmin ? 'Administrador' : 'Morador'
-    });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -187,6 +224,18 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
       setErrorMsg(err?.message || 'Erro ao salvar dados no servidor. Verifique sua conexão.');
       return;
     }
+
+    onUpdateProfile({
+      ...userProfile,
+      fullName,
+      email,
+      apartmentNumber,
+      avatar,
+      twoFactorEnabled: twoFactor,
+      visibleToOthers: visibleToOthers,
+      isAdmin,
+      role: isAdmin ? 'Administrador' : 'Morador'
+    });
 
     setSuccessMsg('Alterações salvas com sucesso!');
     setTimeout(() => setSuccessMsg(''), 3000);
@@ -295,6 +344,14 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
           </button>
 
           <button 
+            onClick={() => onNavigate('ocorrencias', 'none')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+          >
+            <Megaphone className="w-4 h-4 text-[#8C7364]" />
+            <span>Ocorrências</span>
+          </button>
+
+          <button 
             onClick={() => onNavigate('indica_apt', 'none')}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
           >
@@ -309,6 +366,16 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
             <User className="w-4 h-4" />
             <span>Perfil</span>
           </button>
+
+          {isAdmin && (
+            <button 
+              onClick={() => onNavigate('caixa', 'push')}
+              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
+            >
+              <CreditCard className="w-4 h-4 text-[#8C7364]" />
+              <span>Caixa do Prédio</span>
+            </button>
+          )}
         </nav>
 
         <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
@@ -532,7 +599,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
       {/* //nav//span[contains(text(), 'Home')]/.. */}
       {/* //nav//span[contains(text(), 'Notices')]/.. */}
       {/* //nav//span[contains(text(), 'Services')]/.. */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
         
         <button 
           onClick={() => onNavigate('dashboard', 'none')}
@@ -550,6 +617,14 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
           <Bell className="w-5 h-5" />
           <span className="sr-only">Notices</span>
           <span className="text-[10px] font-bold">Avisos</span>
+        </button>
+
+        <button 
+          onClick={() => onNavigate('ocorrencias', 'none')}
+          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
+        >
+          <Megaphone className="w-5 h-5" />
+          <span className="text-[10px] font-bold">Ocorrências</span>
         </button>
 
         <button 
@@ -682,6 +757,85 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
                       className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md hover:shadow-lg"
                     >
                       Salvar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Admin Activation Confirmation Modal */}
+      <AnimatePresence>
+        {isAdminConfirmOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-md bg-[#FBF9F6] rounded-2xl p-8 shadow-2xl border border-[#EAE3D5] relative"
+            >
+              <button
+                onClick={() => setIsAdminConfirmOpen(false)}
+                className="absolute right-4 top-4 p-1.5 text-[#8C7364] hover:text-[#3E342F] rounded-full hover:bg-[#F5F2EB] transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-[#8C7364]/10 rounded-full flex items-center justify-center text-[#8C7364]">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#3E342F] font-display">Ativar Usuário ADMIN</h3>
+                    <p className="text-xs text-[#8C7364]">Digite sua senha para confirmar a ativação.</p>
+                  </div>
+                </div>
+
+                <form onSubmit={(e) => { e.preventDefault(); handleConfirmAdminPassword(); }} className="space-y-4">
+                  {adminConfirmError && (
+                    <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium text-center border border-red-100">
+                      {adminConfirmError}
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <label className="text-[#8C7364] text-[10px] font-bold tracking-widest uppercase block">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C7364]">
+                        <Lock className="w-5 h-5" />
+                      </span>
+                      <input
+                        type="password"
+                        placeholder="Digite sua senha atual"
+                        value={adminPassword}
+                        onChange={(e) => {
+                          setAdminPassword(e.target.value);
+                          setAdminConfirmError('');
+                        }}
+                        className="w-full pl-11 pr-11 py-3 bg-[#F5F2EB] border border-[#E5DFD5] rounded-xl text-[#3E342F] font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-2 focus:ring-[#8C7364]/20 focus:border-[#8C7364] transition-all text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAdminConfirmOpen(false)}
+                      className="py-3 bg-[#F5F2EB] hover:bg-[#E5DFD5] text-[#3E342F] font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md hover:shadow-lg"
+                    >
+                      Confirmar
                     </button>
                   </div>
                 </form>
