@@ -30,6 +30,30 @@ import OcorrenciasScreen from './components/OcorrenciasScreen';
 import IndicaAptScreen from './components/IndicaAptScreen';
 import PerfilScreen from './components/PerfilScreen';
 
+const WEEKDAYS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+function formatRelativeTimeLabel(iso: string): string {
+  if (!iso) return '';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+
+  if (diff < 60_000) return 'Agora';
+
+  const minutes = Math.floor(diff / 60_000);
+  if (minutes < 60) return `há ${minutes} minuto${minutes === 1 ? '' : 's'}`;
+
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const hours = Math.floor(diff / 3_600_000);
+  if (date.getTime() >= startOfToday) return `há ${hours} hora${hours === 1 ? '' : 's'}`;
+  if (date.getTime() >= startOfToday - 86_400_000) return 'Ontem';
+  if (date.getTime() >= startOfToday - 6 * 86_400_000) return WEEKDAYS[date.getDay()];
+
+  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil' | 'ocorrencias'>(() => {
     try {
@@ -92,6 +116,8 @@ export default function App() {
     return { name: 'Roberto Mendes', period: 'Gestão 2023-2025', quote: 'Nosso compromisso é manter o Oslo como referência em convivência e...', avatar: '/images/syndic_roberto.jpg' };
   });
   const [syndicWhatsapp, setSyndicWhatsapp] = useState(() => localStorage.getItem('syndic_whatsapp') || '');
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -209,6 +235,8 @@ export default function App() {
   };
 
   const fetchSharedData = async () => {
+    setRecommendationsLoading(true);
+    setRecommendationsError(null);
     try {
       const [supabaseNotices, supabaseRecommendations] = await Promise.all([
         noticesService.getAll(),
@@ -238,6 +266,7 @@ export default function App() {
         apartment: r.apartment,
         authorName: r.author_name || undefined,
         authorAvatar: r.author_avatar || undefined,
+        authorRole: r.author_role || undefined,
         providerName: r.provider_name || '',
         category: r.category || 'OUTROS',
         comment: r.comment || '',
@@ -247,7 +276,24 @@ export default function App() {
         link: r.link || undefined,
         linkText: r.link_text || undefined,
         phone: r.phone || undefined,
-        date: '',
+        date: r.created_at ? formatRelativeTimeLabel(r.created_at) : '',
+        createdAt: r.created_at || undefined,
+        likes: r.likes || 0,
+        likedBy: r.liked_by || [],
+        comments: Array.isArray(r.comments)
+          ? r.comments.map((c: any) => ({
+              id: c.id,
+              authorName: c.authorName || c.author_name || 'Morador',
+              apartment: c.apartment || '',
+              avatar: c.avatar || '',
+              comment: c.comment || '',
+              createdAt: c.createdAt || c.created_at || new Date().toISOString(),
+            }))
+          : [],
+        views: r.views || 0,
+        viewedBy: r.viewed_by || [],
+        savedBy: r.saved_by || [],
+        hiddenBy: r.hidden_by || [],
       })) as Recommendation[];
       setRecommendations(mappedRecs);
       try {
@@ -255,6 +301,9 @@ export default function App() {
       } catch {}
     } catch (e) {
       console.error('Error fetching shared data', e);
+      setRecommendationsError('Não conseguimos carregar as recomendações.');
+    } finally {
+      setRecommendationsLoading(false);
     }
   };
 
@@ -535,6 +584,7 @@ export default function App() {
       apartment: newRec.apartment,
       author_name: newRec.authorName || null,
       author_avatar: newRec.authorAvatar || null,
+      author_role: newRec.authorRole || null,
       provider_name: newRec.providerName,
       category: newRec.category,
       comment: newRec.comment,
@@ -544,6 +594,13 @@ export default function App() {
       link: newRec.link || null,
       link_text: newRec.linkText || null,
       phone: newRec.phone || null,
+      likes: newRec.likes || 0,
+      liked_by: newRec.likedBy || [],
+      comments: newRec.comments || [],
+      views: newRec.views || 0,
+      viewed_by: newRec.viewedBy || [],
+      saved_by: newRec.savedBy || [],
+      hidden_by: newRec.hiddenBy || [],
       created_by: null,
     }).catch(console.error);
   };
@@ -581,6 +638,99 @@ export default function App() {
       console.error(e);
     }
     recommendationsService.delete(id).catch(console.error);
+  };
+
+  const handleToggleRecommendationLike = (id: string) => {
+    const target = recommendations.find(r => r.id === id);
+    if (!target) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const already = (target.likedBy || []).includes(userKey);
+    const newLikedBy = already
+      ? (target.likedBy || []).filter(k => k !== userKey)
+      : [...(target.likedBy || []), userKey];
+    const newLikes = already ? Math.max(0, (target.likes || 0) - 1) : (target.likes || 0) + 1;
+    const updated = recommendations.map(r => r.id === id ? { ...r, likedBy: newLikedBy, likes: newLikes } : r);
+    setRecommendations(updated);
+    try {
+      localStorage.setItem('oslo_recommendations', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    recommendationsService.update(id, { likes: newLikes, liked_by: newLikedBy }).catch(console.error);
+  };
+
+  const handleAddRecommendationComment = (id: string, comment: OcorrenciaComment) => {
+    const target = recommendations.find(r => r.id === id);
+    if (!target) return;
+    const newComments = [...(target.comments || []), comment];
+    const updated = recommendations.map(r => r.id === id ? { ...r, comments: newComments } : r);
+    setRecommendations(updated);
+    try {
+      localStorage.setItem('oslo_recommendations', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    recommendationsService.update(id, { comments: newComments }).catch(console.error);
+  };
+
+  const handleToggleRecommendationSave = (id: string) => {
+    const target = recommendations.find(r => r.id === id);
+    if (!target) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const already = (target.savedBy || []).includes(userKey);
+    const newSavedBy = already
+      ? (target.savedBy || []).filter(k => k !== userKey)
+      : [...(target.savedBy || []), userKey];
+    const updated = recommendations.map(r => r.id === id ? { ...r, savedBy: newSavedBy } : r);
+    setRecommendations(updated);
+    try {
+      localStorage.setItem('oslo_recommendations', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    recommendationsService.update(id, { saved_by: newSavedBy }).catch(console.error);
+  };
+
+  const handleToggleHideRecommendation = (id: string) => {
+    const target = recommendations.find(r => r.id === id);
+    if (!target) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const already = (target.hiddenBy || []).includes(userKey);
+    const newHiddenBy = already
+      ? (target.hiddenBy || []).filter(k => k !== userKey)
+      : [...(target.hiddenBy || []), userKey];
+    const updated = recommendations.map(r => r.id === id ? { ...r, hiddenBy: newHiddenBy } : r);
+    setRecommendations(updated);
+    try {
+      localStorage.setItem('oslo_recommendations', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    recommendationsService.update(id, { hidden_by: newHiddenBy }).catch(console.error);
+  };
+
+  const handleIncrementRecommendationViews = (ids: string[]) => {
+    if (ids.length === 0) return;
+    const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
+    const idSet = new Set(ids);
+    const updated = recommendations.map(r =>
+      idSet.has(r.id) && !(r.viewedBy || []).includes(userKey)
+        ? { ...r, viewedBy: [...(r.viewedBy || []), userKey], views: (r.views || 0) + 1 }
+        : r
+    );
+    setRecommendations(updated);
+    try {
+      localStorage.setItem('oslo_recommendations', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    ids.forEach(id => {
+      const prev = recommendations.find(r => r.id === id);
+      const rec = updated.find(r => r.id === id);
+      if (rec && prev && !(prev.viewedBy || []).includes(userKey) && (rec.viewedBy || []).includes(userKey)) {
+        recommendationsService.update(id, { views: rec.views, viewed_by: rec.viewedBy }).catch(console.error);
+      }
+    });
   };
 
   const persistOcorrencias = (updated: Ocorrencia[]) => {
@@ -1028,9 +1178,17 @@ export default function App() {
             <IndicaAptScreen 
               recommendations={recommendations}
               userProfile={userProfile}
+              loading={recommendationsLoading}
+              error={recommendationsError}
+              onRetry={() => fetchSharedData()}
               onAddRecommendation={handleAddRecommendation}
               onEditRecommendation={handleEditRecommendation}
               onDeleteRecommendation={handleDeleteRecommendation}
+              onToggleLike={handleToggleRecommendationLike}
+              onAddComment={handleAddRecommendationComment}
+              onToggleSave={handleToggleRecommendationSave}
+              onToggleHide={handleToggleHideRecommendation}
+              onIncrementViews={handleIncrementRecommendationViews}
               onNavigate={handleNavigate}
             />
           )}

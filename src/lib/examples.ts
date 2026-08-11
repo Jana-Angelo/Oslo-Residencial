@@ -91,6 +91,7 @@ async function createRecommendation() {
     apartment: 'Apartamento 04',
     author_name: 'Elena Vardalos',
     author_avatar: null,
+    author_role: 'Morador',
     provider_name: 'Eletricista Silva',
     category: 'ELÉTRICA',
     comment: 'Excelente profissional, trabalhou rápido e limpo.',
@@ -100,6 +101,13 @@ async function createRecommendation() {
     link: null,
     link_text: null,
     phone: '+55 11 99999-0000',
+    likes: 0,
+    liked_by: [],
+    comments: [],
+    views: 0,
+    viewed_by: [],
+    hidden_by: [],
+    saved_by: [],
     created_by: null,
   });
   console.log('Recomendação criada:', newRec);
