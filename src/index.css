@@ -29,3 +29,25 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #8C7364;
 }
+
+/* Accessibility: visible focus ring on all interactive elements */
+:where(button, a, input, select, textarea, [role="button"]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FBF9F6, 0 0 0 4px #8C7364;
+  border-radius: 10px;
+}
+
+/* Micro-interaction: subtle press feedback (no animation overload) */
+:where(button, [role="button"], a):active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

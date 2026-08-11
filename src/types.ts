@@ -18,6 +18,7 @@ export interface Recommendation {
   apartment: string;
   authorName?: string;
   authorAvatar?: string;
+  authorRole?: string;
   providerName: string;
   category: 'MARCENARIA' | 'ELÉTRICA' | 'PAISAGISMO' | 'OUTROS' | string;
   comment: string;
@@ -28,6 +29,14 @@ export interface Recommendation {
   linkText?: string;
   phone?: string;
   date: string;
+  likes?: number;
+  likedBy?: string[];
+  comments?: OcorrenciaComment[];
+  views?: number;
+  viewedBy?: string[];
+  savedBy?: string[];
+  hiddenBy?: string[];
+  createdAt?: string;
 }
 
 export interface PendingPayment {

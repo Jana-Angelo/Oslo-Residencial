@@ -32,11 +32,21 @@ export interface Notice {
   updated_at: string;
 }
 
+export interface RecommendationComment {
+  id: string;
+  authorName: string;
+  apartment: string;
+  avatar: string;
+  comment: string;
+  createdAt: string;
+}
+
 export interface Recommendation {
   id: string;
   apartment: string;
   author_name: string | null;
   author_avatar: string | null;
+  author_role: string | null;
   provider_name: string;
   category: string;
   comment: string;
@@ -46,6 +56,13 @@ export interface Recommendation {
   link: string | null;
   link_text: string | null;
   phone: string | null;
+  likes: number;
+  liked_by: string[];
+  comments: RecommendationComment[];
+  views: number;
+  viewed_by: string[];
+  hidden_by: string[];
+  saved_by: string[];
   created_by: string | null;
   created_at: string;
   updated_at: string;
