@@ -1,11 +1,10 @@
-import { Flame, ChevronRight, Bookmark, Sparkles, Users, Info, Plus, Heart, CheckCircle2 } from 'lucide-react';
+import { Flame, ChevronRight, Bookmark, Users, Info, Plus, Heart, CheckCircle2 } from 'lucide-react';
 import { Recommendation } from '../../types';
 import { categoryStyle, categoryFriendly, categoryLabel } from './shared';
 
 interface DiscoveryColumnProps {
   topRecs: Recommendation[];
   savedRecs: Recommendation[];
-  topCats: [string, number][];
   myCount: number;
   totalRecs: number;
   totalLikes: number;
@@ -18,7 +17,6 @@ interface DiscoveryColumnProps {
 export default function DiscoveryColumn({
   topRecs,
   savedRecs,
-  topCats,
   myCount,
   totalRecs,
   totalLikes,
@@ -30,39 +28,49 @@ export default function DiscoveryColumn({
   return (
     <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
       {/* Trending */}
-      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-6 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
-        <div className="flex items-center gap-2 mb-4">
-          <Flame className="w-4 h-4 text-[#C2571B]" />
-          <h3 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Em alta no condomínio</h3>
+      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-5 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">🔥</span>
+            <h3 className="text-xs font-bold text-[#3E342F]">Em alta no condomínio</h3>
+          </div>
+          {topRecs.length > 0 && (
+            <button
+              onClick={onClear}
+              className="text-[10px] font-extrabold text-[#8C7364] hover:text-[#3E342F] cursor-pointer"
+            >
+              Ver todos
+            </button>
+          )}
         </div>
 
         {topRecs.length > 0 ? (
-          <div className="space-y-1">
+          <div className="space-y-3">
             {topRecs.map((rec, i) => {
               const style = categoryStyle(rec.category);
               return (
                 <button
                   key={rec.id}
                   onClick={() => onSearch(rec.providerName)}
-                  className="w-full group flex items-start gap-3 rounded-xl px-2 py-2 hover:bg-[#F7F4F0] transition-colors cursor-pointer text-left"
+                  className="w-full group flex items-center gap-3 rounded-xl hover:bg-[#F7F4F0] transition-colors cursor-pointer text-left"
                 >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-extrabold font-display shrink-0 ${i === 0 ? 'bg-[#FCE8EF] text-[#C2185B]' : i === 1 ? 'bg-amber-100 text-amber-700' : i === 2 ? 'bg-[#E8F5EC] text-[#2E7D4F]' : 'bg-[#F5F2EB] text-[#A6978A]'}`}>
+                  <span className="w-5 h-5 rounded-full bg-[#F6F0EB] text-[#8C7364] text-[10px] font-extrabold flex items-center justify-center shrink-0">
                     {i + 1}
+                  </span>
+                  <div className="w-9 h-9 rounded-full overflow-hidden bg-[#FBF9F6] shrink-0 border border-[#EAE3D5] flex items-center justify-center">
+                    {rec.images && rec.images.length > 0 ? (
+                      <img src={rec.images[0]} alt={rec.providerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[#8C7364]">{style.icon}</span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-extrabold text-sm text-[#2D2D2D] truncate">{rec.providerName}</p>
-                    <p className="text-[10px] text-[#A6978A] font-semibold mt-0.5 flex items-center gap-1">
-                      <span className="inline-flex items-center gap-1 truncate">
-                        {style.icon}
-                        {categoryFriendly(rec.category)}
-                      </span>
+                    <p className="font-extrabold text-xs text-[#3E342F] truncate">{rec.providerName}</p>
+                    <p className="text-[10px] text-[#A6978A] font-semibold truncate mt-0.5">{categoryFriendly(rec.category)}</p>
+                    <p className="text-[9px] font-extrabold text-rose-500 flex items-center gap-0.5 mt-0.5">
+                      <Heart className="w-2.5 h-2.5 fill-current" />
+                      <span>{rec.likes || 0} {rec.likes === 1 ? 'recomendação' : 'recomendações'}</span>
                     </p>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Heart className="w-3.5 h-3.5 text-[#C2185B] fill-current" />
-                    <span className="text-xs font-extrabold text-[#C2185B]">
-                      {rec.likes || 0} {rec.likes === 1 ? 'recomendação' : 'recomendações'}
-                    </span>
                   </div>
                 </button>
               );
@@ -73,42 +81,47 @@ export default function DiscoveryColumn({
             As indicações mais endossadas aparecem aqui.
           </p>
         )}
-
-        {topRecs.length > 0 && (
-          <button
-            onClick={onClear}
-            className="mt-2 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-[#8C7364] hover:bg-[#F5F2EB] transition-colors cursor-pointer"
-          >
-            Ver todos
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        )}
       </div>
 
       {/* Saved */}
-      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-6 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
-        <div className="flex items-center gap-2 mb-4">
-          <Bookmark className="w-4 h-4 text-[#8C7364]" />
-          <h3 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Minhas indicações salvas</h3>
+      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-5 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-1.5">
+            <Bookmark className="w-3.5 h-3.5 text-[#8C7364]" />
+            <h3 className="text-xs font-bold text-[#3E342F]">Minhas indicações salvas</h3>
+          </div>
+          {savedRecs.length > 0 && (
+            <button
+              onClick={() => onFilter('FAVORITOS')}
+              className="text-[10px] font-extrabold text-[#8C7364] hover:text-[#3E342F] cursor-pointer"
+            >
+              Ver todas
+            </button>
+          )}
         </div>
 
         {savedRecs.length > 0 ? (
-          <div className="space-y-1">
+          <div className="space-y-3">
             {savedRecs.slice(0, 5).map(rec => {
               const style = categoryStyle(rec.category);
               return (
                 <button
                   key={rec.id}
                   onClick={() => onSearch(rec.providerName)}
-                  className="w-full group flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-[#F7F4F0] transition-colors cursor-pointer text-left"
+                  className="w-full group flex items-center gap-3 rounded-xl hover:bg-[#F7F4F0] transition-colors cursor-pointer text-left"
                 >
-                  <div className={`w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0 border ${style.chip}`}>
-                    {style.icon}
+                  <div className="w-9 h-9 rounded-full overflow-hidden bg-[#FBF9F6] shrink-0 border border-[#EAE3D5] flex items-center justify-center">
+                    {rec.images && rec.images.length > 0 ? (
+                      <img src={rec.images[0]} alt={rec.providerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[#8C7364]">{style.icon}</span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[#2D2D2D] truncate">{rec.providerName}</p>
-                    <p className="text-[10px] text-[#A6978A] font-semibold truncate">{categoryLabel(rec.category)}</p>
+                    <p className="text-xs font-extrabold text-[#3E342F] truncate">{rec.providerName}</p>
+                    <p className="text-[10px] text-[#A6978A] font-semibold truncate mt-0.5">{categoryLabel(rec.category)}</p>
                   </div>
+                  <Bookmark className="w-3.5 h-3.5 text-[#8C7364] fill-[#8C7364] shrink-0" />
                 </button>
               );
             })}
@@ -122,44 +135,10 @@ export default function DiscoveryColumn({
         {savedRecs.length > 0 && (
           <button
             onClick={() => onFilter('FAVORITOS')}
-            className="mt-2 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-[#8C7364] hover:bg-[#F5F2EB] transition-colors cursor-pointer"
+            className="mt-4 w-full py-2 border border-[#EAE3D5] hover:bg-[#F5F2EB] rounded-xl text-[10px] font-bold uppercase tracking-wider text-[#8C7364] transition-colors cursor-pointer text-center"
           >
             Ver todas as salvas
-            <ChevronRight className="w-3.5 h-3.5" />
           </button>
-        )}
-      </div>
-
-      {/* Categories */}
-      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-6 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-4 h-4 text-[#8C7364]" />
-          <h3 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Categorias em alta</h3>
-        </div>
-
-        {topCats.length > 0 ? (
-          <div className="space-y-2.5">
-            {topCats.map(([cat, count]) => {
-              const style = categoryStyle(cat);
-              return (
-                <button
-                  key={cat}
-                  onClick={() => onFilter(cat)}
-                  className="w-full group flex items-center justify-between rounded-xl px-2 py-1 -mx-2 hover:bg-[#F7F4F0] transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className={`w-7 h-7 rounded-[10px] flex items-center justify-center shrink-0 border ${style.chip}`}>
-                      {style.icon}
-                    </span>
-                    <span className="text-[13px] font-semibold text-[#2D2D2D] truncate">{categoryLabel(cat)}</span>
-                  </div>
-                  <span className="text-sm font-bold text-[#A6978A] shrink-0">{count}</span>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-xs text-[#A6978A] py-4 text-center">Nenhuma indicação ainda.</p>
         )}
       </div>
 

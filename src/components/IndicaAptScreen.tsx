@@ -175,12 +175,6 @@ export default function IndicaAptScreen({
   // Discovery data
   const topRecs = [...visibleRecs].sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 5);
   const savedRecs = visibleRecs.filter(r => (r.savedBy || []).includes(userKey));
-  const catCounts = visibleRecs.reduce<Record<string, number>>((acc, r) => {
-    const g = filterGroup(r.category) || 'OUTROS';
-    acc[g] = (acc[g] || 0) + 1;
-    return acc;
-  }, {});
-  const topCats = Object.entries(catCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const myCount = recommendations.filter(isOwn).length;
   const totalLikes = recommendations.reduce((s, r) => s + (r.likes || 0), 0);
 
@@ -505,7 +499,6 @@ export default function IndicaAptScreen({
           <DiscoveryColumn
             topRecs={topRecs}
             savedRecs={savedRecs}
-            topCats={topCats}
             myCount={myCount}
             totalRecs={recommendations.length}
             totalLikes={totalLikes}

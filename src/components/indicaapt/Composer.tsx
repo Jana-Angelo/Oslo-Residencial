@@ -1,4 +1,4 @@
-import { Sparkles, Plus, Star, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { Sparkles, Heart, Plus, Star, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { Avatar, SOCIAL_CATEGORY_OPTIONS } from './shared';
 
@@ -68,8 +68,8 @@ export default function Composer({
       <div className="p-4">
         {!expanded && (
           <div className="flex flex-wrap items-center gap-3">
-            <div className="w-10 h-10 bg-[#8C7364]/10 text-[#8C7364] rounded-full flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-10 h-10 bg-[#FCE8EF] text-[#C2185B] rounded-full flex items-center justify-center shrink-0">
+              <Heart className="w-5 h-5 fill-current" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-display font-extrabold text-sm text-[#3E342F] leading-tight">
@@ -81,10 +81,10 @@ export default function Composer({
             </div>
             <button
               onClick={onFocus}
-              className="flex items-center gap-1.5 px-4 py-2 bg-[#8C7364] text-white rounded-full text-[10px] font-bold shadow-sm hover:bg-[#7A6355] active:bg-[#685346] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 bg-transparent border border-[#7A5B47] text-[#7A5B47] rounded-[10px] text-[10px] font-bold hover:bg-[#7A5B47]/5 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
-              + Fazer uma indicação
+              Fazer uma indicação
             </button>
           </div>
         )}

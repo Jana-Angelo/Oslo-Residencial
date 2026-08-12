@@ -85,14 +85,14 @@ export default function Header({
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+      <div className="flex items-center gap-1.5 md:gap-2.5 shrink-0">
         {/* Main CTA */}
         <button
           onClick={onFocusComposer}
-          className="flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 bg-[#8C7364] text-white rounded-full text-xs font-bold shadow-sm hover:bg-[#7A6355] active:bg-[#685346] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#7A5B47] text-white rounded-[10px] text-xs font-bold hover:bg-[#6D503E] active:bg-[#5C4334] transition-colors cursor-pointer shadow-sm"
         >
           <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">+ Fazer uma indicação</span>
+          <span className="hidden sm:inline">Fazer uma indicação</span>
           <span className="sm:hidden">Indicar</span>
         </button>
 
@@ -102,13 +102,13 @@ export default function Header({
             onClick={onToggleNotifications}
             className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-full transition-colors relative cursor-pointer"
             title="Notificações"
-            aria-label="Abrir notificações"
+            aria-label="Abrir notificacões"
             aria-expanded={isNotificationsOpen}
           >
             <Bell className="w-5 h-5" />
-            {hasNotifications && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#FBF9F6]"></span>
-            )}
+            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] font-extrabold flex items-center justify-center border border-[#FBF9F6]">
+              2
+            </span>
           </button>
 
           <AnimatePresence>
@@ -155,14 +155,14 @@ export default function Header({
               name={userProfile.fullName}
               apartment={userProfile.apartmentNumber}
               src={userProfile.avatar}
-              className="w-9 h-9 text-sm shrink-0"
+              className="w-9 h-9 text-sm shrink-0 border border-[#EAE3D5]"
             />
             <div className="hidden md:block text-left min-w-0">
               <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">
                 Olá, {firstName}
               </p>
-              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate">
-                {userProfile.apartmentNumber}
+              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">
+                {userProfile.apartmentNumber ? (String(userProfile.apartmentNumber).toLowerCase().includes('apto') ? String(userProfile.apartmentNumber) : `Apto ${userProfile.apartmentNumber}`) : 'Morador'}
               </p>
             </div>
             <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
