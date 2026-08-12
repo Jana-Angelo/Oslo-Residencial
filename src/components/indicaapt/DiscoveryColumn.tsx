@@ -1,11 +1,10 @@
-import { Flame, ChevronRight, Bookmark, Sparkles, Users, Info, Plus, Heart, CheckCircle2 } from 'lucide-react';
+import { Flame, ChevronRight, Bookmark, Users, Info, Plus, Heart, CheckCircle2 } from 'lucide-react';
 import { Recommendation } from '../../types';
 import { categoryStyle, categoryFriendly, categoryLabel } from './shared';
 
 interface DiscoveryColumnProps {
   topRecs: Recommendation[];
   savedRecs: Recommendation[];
-  topCats: [string, number][];
   myCount: number;
   totalRecs: number;
   totalLikes: number;
@@ -18,7 +17,6 @@ interface DiscoveryColumnProps {
 export default function DiscoveryColumn({
   topRecs,
   savedRecs,
-  topCats,
   myCount,
   totalRecs,
   totalLikes,
@@ -142,6 +140,47 @@ export default function DiscoveryColumn({
             Ver todas as salvas
           </button>
         )}
+      </div>
+
+      {/* Community invite */}
+      <div className="bg-[#8C7364] border border-[#7A6355] rounded-2xl p-6 text-white shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 mb-3">
+          <Users className="w-4 h-4 text-[#E8E2DC]" />
+          <h3 className="text-[10px] font-bold tracking-widest uppercase text-[#E8E2DC]">Rede de confiança</h3>
+        </div>
+        <p className="text-sm font-extrabold leading-snug">
+          {myCount === 0
+            ? 'Você ainda não indicou nada.'
+            : 'Obrigado por fazer parte da rede.'}
+        </p>
+        <p className="text-xs text-[#E8E2DC] leading-relaxed mt-1.5">
+          {myCount === 0
+            ? 'Compartilhe algo bom que você descobriu e ajude um vizinho hoje.'
+            : `${totalRecs} indicações já ajudaram seus vizinhos, com ${totalLikes} endossos.`}
+        </p>
+        <button
+          onClick={onFocusComposer}
+          className="mt-4 w-full py-2.5 bg-white text-[#8C7364] hover:bg-[#F5F2EB] rounded-xl text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors shadow-sm flex items-center justify-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" />
+          {myCount === 0 ? 'Fazer minha primeira indicação' : 'Indicar algo novo'}
+        </button>
+      </div>
+
+      {/* About */}
+      <div className="bg-[#F5F2EB]/50 border border-[#EAE3D5] rounded-2xl p-5 space-y-3">
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-[#8C7364]" />
+          <h3 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Sobre o IndicaApt</h3>
+        </div>
+        <p className="text-xs text-[#6E6157] leading-relaxed">
+          Um vizinho encontrou algo bom e compartilhou com os outros. Quanto mais moradores recomendam, maior a
+          confiança na indicação.
+        </p>
+        <div className="flex items-center gap-2 pt-1">
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#2E7D4F]" />
+          <span className="text-[10px] font-semibold text-[#6E6157]">Rede privada do condomínio Oslo</span>
+        </div>
       </div>
     </aside>
   );
