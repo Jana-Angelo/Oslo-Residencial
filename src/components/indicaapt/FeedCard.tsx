@@ -174,203 +174,162 @@ export default function FeedCard({
           )}
         </div>
       </div>
+      {/* Content wrapper */}
+      <div className="px-5 pb-4 flex flex-col md:flex-row gap-5 justify-between">
+        {/* Left side: text info */}
+        <div className="flex-1 min-w-0 space-y-3">
+          <div className="flex items-center gap-1 text-rose-500 text-[10px] font-extrabold uppercase tracking-wider">
+            <Heart className="w-3.5 h-3.5 fill-current" />
+            <span>{recommendationType(rec)}</span>
+          </div>
 
-      {/* Content */}
-      <div className="px-5 pb-4 space-y-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FCE8EF] text-[#C2185B] border border-[#F8C9DC] text-[9px] font-extrabold tracking-wider uppercase">
-            <Heart className="w-3 h-3 fill-current" />
-            {recommendationType(rec)}
-          </span>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold tracking-wider uppercase border ${style.chip}`}>
-            {categoryDisplay(rec.category)}
-          </span>
+          <div>
+            <h4 className="font-display font-extrabold text-xl text-[#3E342F] leading-tight">
+              {rec.providerName}
+            </h4>
+            <div className="flex items-center gap-1.5 text-xs text-[#8C7364] mt-1 font-semibold">
+              <span>{categoryDisplay(rec.category)}</span>
+            </div>
+          </div>
+
+          <p className={`text-sm text-[#6E6157] leading-relaxed whitespace-pre-line ${isLongComment && !textExpanded ? 'line-clamp-5' : ''}`}>
+            {rec.comment}
+          </p>
+
+          {isLongComment && (
+            <button
+              onClick={() => onToggleText(rec.id)}
+              className="text-[11px] font-bold text-[#8C7364] hover:text-[#3E342F] flex items-center gap-1 cursor-pointer"
+            >
+              {textExpanded ? 'Ver menos' : 'Ver mais'}
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${textExpanded ? 'rotate-180' : ''}`} />
+            </button>
+          )}
+
+          {/* Social proof: inline endorsers */}
+          {endorserCount > 0 && (
+            <div className="pt-2">
+              <button
+                onClick={() => onToggleEndorsers(rec.id)}
+                aria-expanded={endorsersOpen}
+                className="inline-flex items-center gap-2 bg-[#F6F0EB] hover:bg-[#EFE7E0] rounded-xl px-3 py-1.5 transition-colors cursor-pointer text-left"
+              >
+                <div className="flex -space-x-1.5 shrink-0">
+                  {endorsers.slice(0, 4).map((e, i) => (
+                    <div key={i} className="w-6 h-6 rounded-full ring-2 ring-[#FBF9F6] overflow-hidden shrink-0">
+                      <EndorserAvatar name={e.name} src={e.avatar} className="w-full h-full text-[8px]" />
+                    </div>
+                  ))}
+                  {endorsers.length > 4 && (
+                    <div className="w-6 h-6 rounded-full ring-2 ring-[#FBF9F6] bg-[#8C7364] text-white text-[8px] font-extrabold flex items-center justify-center shrink-0">
+                      +{endorsers.length - 4}
+                    </div>
+                  )}
+                </div>
+                <span className="text-[11px] font-extrabold text-[#8C7364] flex items-center gap-1.5 ml-1">
+                  {endorserCount} {endorserCount === 1 ? 'morador também recomenda' : 'moradores também recomendam'}
+                  <ChevronRight className={`w-3.5 h-3.5 transition-transform ${endorsersOpen ? 'rotate-90' : ''}`} />
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {endorsersOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 bg-white border border-[#EAE3D5] rounded-xl overflow-hidden max-w-xs">
+                      {endorsers.map(e => (
+                        <div key={e.key} className="flex items-center gap-2.5 px-3 py-2 border-b border-[#F5F2EB] last:border-0">
+                          <div className="w-6 h-6 rounded-full overflow-hidden shrink-0">
+                            <EndorserAvatar name={e.name} src={e.avatar} className="w-full h-full text-[8px]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#3E342F] truncate">
+                            {e.name}
+                          </span>
+                          <span className="text-[10px] text-[#A6978A] font-semibold truncate ml-auto">
+                            {e.key === userKey ? 'Você' : e.key}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
 
-        <h4 className="font-display font-semibold text-xl text-[#3E342F] leading-tight">
-          {rec.providerName}
-        </h4>
-
-        <p className={`text-sm text-[#6E6157] leading-relaxed whitespace-pre-line max-w-[62ch] ${isLongComment && !textExpanded ? 'line-clamp-5' : ''}`}>
-          {rec.comment}
-        </p>
-
-        {isLongComment && (
-          <button
-            onClick={() => onToggleText(rec.id)}
-            className="text-[11px] font-bold text-[#8C7364] hover:text-[#3E342F] flex items-center gap-1 cursor-pointer"
-          >
-            {textExpanded ? 'Ver menos' : 'Ver mais'}
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${textExpanded ? 'rotate-180' : ''}`} />
-          </button>
-        )}
-
-        {/* Images */}
+        {/* Right side: image */}
         {rec.images && rec.images.length > 0 && (
-          <ImageCarousel images={rec.images} onOpen={onOpenImage} />
+          <div className="shrink-0 w-full md:w-[260px] self-center md:self-start">
+            <img
+              src={rec.images[0]}
+              alt={rec.providerName}
+              onClick={() => onOpenImage(rec.images![0])}
+              className="w-full h-[150px] object-cover rounded-2xl cursor-pointer hover:opacity-90 transition-opacity border border-[#EAE3D5]"
+            />
+          </div>
         )}
+      </div>
 
-        {/* Link */}
+      {/* Action bar */}
+      <div className="px-5 py-3 border-t border-[#F5F2EB] flex items-center justify-between gap-3 bg-white">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Também recomendo */}
+          <button
+            onClick={() => onToggleLike(rec.id)}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+              liked
+                ? 'bg-[#8C7364] text-white border-[#8C7364]'
+                : 'bg-white text-[#8C7364] border-[#EAE3D5] hover:bg-[#F5F2EB]'
+            }`}
+          >
+            <ThumbsUp className="w-4 h-4" />
+            <span>Também recomendo {likes > 0 && `(${likes})`}</span>
+          </button>
+
+          {/* Comentar */}
+          <button
+            onClick={() => onToggleComments(rec.id)}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+              expanded
+                ? 'bg-[#F5F2EB] text-[#8C7364] border-[#8C7364]'
+                : 'bg-white text-[#8C7364] border-[#EAE3D5] hover:bg-[#F5F2EB]'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Comentar {comments.length > 0 && `(${comments.length})`}</span>
+          </button>
+
+          {/* Salvar */}
+          <button
+            onClick={() => onToggleFavorite(rec.id)}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+              isFav
+                ? 'bg-[#F5F2EB] text-[#8C7364] border-[#8C7364]'
+                : 'bg-white text-[#A6978A] border-[#EAE3D5] hover:bg-[#F5F2EB]'
+            }`}
+          >
+            <Bookmark className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
+            <span>{isFav ? 'Salvo' : 'Salvar'}</span>
+          </button>
+        </div>
+
+        {/* Link / External actions */}
         {rec.link && (
           <a
             href={rec.link}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#8C7364]/10 hover:bg-[#8C7364]/20 text-[#8C7364] border border-[#8C7364]/25 rounded-full text-[10px] font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-bold text-[#8C7364] hover:text-[#3E342F] transition-colors cursor-pointer"
           >
-            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-            {rec.linkText ? `Abrir: ${rec.linkText}` : 'Abrir o link.'}
+            <span>{rec.linkText || 'Ver cardápio'}</span>
+            <ExternalLink className="w-3.5 h-3.5" />
           </a>
         )}
-      </div>
-
-      {/* Social proof: endorsers */}
-      {endorserCount > 0 && (
-        <div className="px-5 pb-4">
-          <button
-            onClick={() => onToggleEndorsers(rec.id)}
-            aria-expanded={endorsersOpen}
-            className="w-full flex items-center justify-between gap-3 bg-[#FBF9F6] hover:bg-[#F5F2EB] border border-[#8C7364]/25 hover:border-[#8C7364]/40 rounded-2xl px-4 py-3 transition-colors cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="flex -space-x-2.5 shrink-0">
-                {endorsers.slice(0, 4).map((e, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full ring-2 ring-[#FBF9F6] overflow-hidden shrink-0">
-                    <EndorserAvatar name={e.name} src={e.avatar} className="w-full h-full text-[10px]" />
-                  </div>
-                ))}
-                {endorsers.length > 4 && (
-                  <div className="w-8 h-8 rounded-full ring-2 ring-[#FBF9F6] bg-[#8C7364] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
-                    +{endorsers.length - 4}
-                  </div>
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-extrabold text-[#3E342F] truncate">
-                  <span className="text-[#8C7364] text-sm">{endorserCount}</span>{' '}
-                  {endorserCount === 1 ? 'morador' : 'moradores'} também recomendam
-                </p>
-                <p className="text-[10px] text-[#A6978A] font-semibold mt-0.5 flex items-center gap-1">
-                  <ThumbsUp className="w-3 h-3 shrink-0" />
-                  Rede de confiança do Oslo
-                </p>
-              </div>
-            </div>
-            <ChevronRight className={`w-4 h-4 text-[#A6978A] shrink-0 transition-transform ${endorsersOpen ? 'rotate-90' : ''}`} />
-          </button>
-
-          <AnimatePresence>
-            {endorsersOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-2 bg-white border border-[#EAE3D5] rounded-2xl overflow-hidden">
-                  {endorsers.map(e => (
-                    <div key={e.key} className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-[#F5F2EB] last:border-0">
-                      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
-                        <EndorserAvatar name={e.name} src={e.avatar} className="w-full h-full text-[9px]" />
-                      </div>
-                      <span className="text-xs font-bold text-[#3E342F] truncate">
-                        {e.name}
-                      </span>
-                      <span className="text-[10px] text-[#A6978A] font-semibold truncate ml-auto">
-                        {e.key === userKey ? 'Você' : e.key}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* Action bar */}
-      <div className="px-3 py-2 border-t border-[#F5F2EB] flex items-center gap-1 bg-[#FBF9F6]/40">
-        <div className="flex-1 grid grid-cols-3 gap-1">
-          <motion.button
-            onClick={() => onToggleLike(rec.id)}
-            whileTap={{ scale: 0.95 }}
-            aria-pressed={liked}
-            className={`flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-[10px] font-bold transition-colors cursor-pointer ${
-              liked
-                ? 'bg-[#8C7364] text-white shadow-sm'
-                : 'text-[#8C7364] hover:bg-[#8C7364]/10'
-            }`}
-          >
-            <motion.span
-              key={liked ? 'endorse-on' : 'endorse-off'}
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 24 }}
-              className="flex items-center gap-1.5"
-            >
-              {liked
-                ? <Check className="w-4 h-4 shrink-0" />
-                : <ThumbsUp className="w-4 h-4 shrink-0" />}
-              <span className="truncate">{liked ? '✓ Você também recomenda' : 'Também recomendo'}</span>
-            </motion.span>
-            {likes > 0 && (
-              <motion.span
-                key={`${rec.id}-likes-${likes}`}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold leading-none ${liked ? 'bg-white/25 text-white' : 'bg-[#8C7364] text-white'}`}
-              >
-                {likes}
-              </motion.span>
-            )}
-          </motion.button>
-          <motion.button
-            onClick={() => onToggleComments(rec.id)}
-            whileTap={{ scale: 0.95 }}
-            aria-expanded={expanded}
-            className={`flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-[10px] font-bold transition-colors cursor-pointer ${
-              expanded ? 'text-[#8C7364]' : 'text-[#A6978A] hover:text-[#8C7364] hover:bg-[#F5F2EB]'
-            }`}
-          >
-            <MessageSquare className="w-4 h-4 shrink-0" />
-            <span className="truncate">Comentar</span>
-            {comments.length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold leading-none bg-[#EAE3D5] text-[#8C7364]">
-                {comments.length}
-              </span>
-            )}
-          </motion.button>
-          <motion.button
-            onClick={() => onToggleFavorite(rec.id)}
-            whileTap={{ scale: 0.95 }}
-            aria-pressed={isFav}
-            className={`flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-[10px] font-bold transition-colors cursor-pointer ${
-              isFav ? 'text-[#8C7364]' : 'text-[#A6978A] hover:text-[#8C7364] hover:bg-[#F5F2EB]'
-            }`}
-          >
-            <motion.span
-              key={isFav ? 'saved-on' : 'saved-off'}
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 24 }}
-              className="flex items-center gap-1.5"
-            >
-              <Bookmark className={`w-4 h-4 shrink-0 ${isFav ? 'fill-current' : ''}`} />
-              <span className="truncate">{isFav ? 'Salvo' : 'Salvar'}</span>
-            </motion.span>
-          </motion.button>
-        </div>
-        <div className="self-stretch flex items-center ml-0.5 pl-0.5 border-l border-[#EAE3D5]">
-          <button
-            onClick={() => onShare(rec)}
-            title="Compartilhar"
-            aria-label="Compartilhar indicação"
-            className="p-2 rounded-lg text-[#A6978A] hover:text-[#8C7364] hover:bg-[#F5F2EB] transition-colors cursor-pointer"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
       </div>
 
       {/* Comments */}

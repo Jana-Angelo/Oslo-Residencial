@@ -147,82 +147,81 @@ export default function FeedSection({
   return (
     <div className="space-y-5 w-full">
       {/* Search + Filters */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
           <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8C7364]">
-              <Search className="w-4 h-4" />
-            </span>
             <input
               type="text"
-              placeholder="O que você está procurando?"
+              placeholder="O que você está procurando? Ex.: eletricista, pizza, pet shop, restaurante..."
               aria-label="Buscar indicações"
               value={searchTerm}
               onChange={e => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white border border-[#E5DFD5] rounded-[14px] text-xs font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
+              className="w-full pl-4 pr-10 py-3 bg-white border border-[#E5DFD5] rounded-[14px] text-xs font-semibold placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
             />
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8C7364]">
+              <Search className="w-4 h-4" />
+            </span>
           </div>
-          <p className="text-[10px] text-[#A6978A] font-semibold mt-1.5 px-1">
-            Ex.: eletricista, pizza, pet shop, restaurante...
-          </p>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
-          {MAIN_FILTERS.map(f => {
-            const isActive = activeFilter === f.value;
-            return (
-              <button
-                key={f.value}
-                onClick={() => onFilterChange(f.value)}
-                className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#8C7364] text-white shadow-xs'
-                    : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
-                }`}
-              >
-                {f.label}
-              </button>
-            );
-          })}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex gap-1.5 overflow-x-auto pb-1.5 md:pb-0 scrollbar-none">
+            {MAIN_FILTERS.map(f => {
+              const isActive = activeFilter === f.value;
+              return (
+                <button
+                  key={f.value}
+                  onClick={() => onFilterChange(f.value)}
+                  className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#8C7364] text-white shadow-xs'
+                      : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              );
+            })}
 
-          <button
-            onClick={() => onFilterChange('FAVORITOS')}
-            className={`flex items-center gap-1 px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
-              activeFilter === 'FAVORITOS'
-                ? 'bg-[#8C7364] text-white shadow-xs'
-                : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
-            }`}
-          >
-            <Bookmark className={`w-3 h-3 ${activeFilter === 'FAVORITOS' ? 'fill-white' : 'fill-transparent'}`} />
-            Salvas
-          </button>
-
-          <button
-            onClick={() => onFilterChange('MINHAS')}
-            className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
-              activeFilter === 'MINHAS'
-                ? 'bg-[#8C7364] text-white shadow-xs'
-                : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
-            }`}
-          >
-            Minhas
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider shrink-0">
-            Ordenar por:
-          </span>
-          <div className="relative shrink-0">
-            <select
-              value={sortBy}
-              onChange={e => onSortChange(e.target.value)}
-              aria-label="Ordenar por"
-              className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-[#E5DFD5] rounded-full text-[10px] font-bold text-[#6E6157] focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
+            <button
+              onClick={() => onFilterChange('FAVORITOS')}
+              className={`flex items-center gap-1 px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
+                activeFilter === 'FAVORITOS'
+                  ? 'bg-[#8C7364] text-white shadow-xs'
+                  : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
+              }`}
             >
-              {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-            <ArrowUpDown className="w-3 h-3 text-[#A6978A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Bookmark className={`w-3 h-3 ${activeFilter === 'FAVORITOS' ? 'fill-white' : 'fill-transparent'}`} />
+              Salvas
+            </button>
+
+            <button
+              onClick={() => onFilterChange('MINHAS')}
+              className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${
+                activeFilter === 'MINHAS'
+                  ? 'bg-[#8C7364] text-white shadow-xs'
+                  : 'bg-[#F5F2EB]/70 text-[#8C7364] hover:bg-[#EAE3D5]'
+              }`}
+            >
+              Minhas
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+            <span className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider shrink-0">
+              Ordenar por:
+            </span>
+            <div className="relative shrink-0">
+              <select
+                value={sortBy}
+                onChange={e => onSortChange(e.target.value)}
+                aria-label="Ordenar por"
+                className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-[#E5DFD5] rounded-full text-[10px] font-bold text-[#6E6157] focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
+              >
+                {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <ArrowUpDown className="w-3 h-3 text-[#A6978A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
