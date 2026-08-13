@@ -268,38 +268,40 @@ export default function FeedCard({
       </div>
 
       {/* Action bar */}
-      <div className="px-5 py-3 border-t border-[#F5F2EB] flex items-center justify-between gap-3 bg-white">
+      <div className="px-5 py-3 border-t border-[#F5F2EB] space-y-3 md:space-y-0 bg-white">
         <div className="flex items-center gap-2 flex-wrap">
           {/* Também recomendo */}
           <button
             onClick={() => onToggleLike(rec.id)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               liked
                 ? 'bg-[#8C7364] text-white border-[#8C7364]'
                 : 'bg-white text-[#8C7364] border-[#EAE3D5] hover:bg-[#F5F2EB]'
             }`}
           >
             <ThumbsUp className="w-4 h-4" />
-            <span>Também recomendo {likes > 0 && `(${likes})`}</span>
+            <span className="hidden sm:inline">Também recomendo {likes > 0 && `(${likes})`}</span>
+            <span className="sm:hidden">{likes > 0 && `(${likes})`}</span>
           </button>
 
           {/* Comentar */}
           <button
             onClick={() => onToggleComments(rec.id)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               expanded
                 ? 'bg-[#F5F2EB] text-[#8C7364] border-[#8C7364]'
                 : 'bg-white text-[#8C7364] border-[#EAE3D5] hover:bg-[#F5F2EB]'
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Comentar {comments.length > 0 && `(${comments.length})`}</span>
+            <span className="hidden sm:inline">Comentar {comments.length > 0 && `(${comments.length})`}</span>
+            <span className="sm:hidden">{comments.length > 0 && `(${comments.length})`}</span>
           </button>
 
           {/* Salvar */}
           <button
             onClick={() => onToggleFavorite(rec.id)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               isFav
                 ? 'bg-[#F5F2EB] text-[#8C7364] border-[#8C7364]'
                 : 'bg-white text-[#A6978A] border-[#EAE3D5] hover:bg-[#F5F2EB]'
@@ -316,10 +318,10 @@ export default function FeedCard({
             href={rec.link}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 text-xs font-bold text-[#8C7364] hover:text-[#3E342F] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#8C7364] hover:text-[#3E342F] transition-colors cursor-pointer break-all"
           >
-            <span>{rec.linkText || 'Ver cardápio'}</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="truncate">{rec.linkText || 'Ver cardápio'}</span>
+            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
           </a>
         )}
       </div>

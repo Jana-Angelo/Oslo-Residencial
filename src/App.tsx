@@ -1132,6 +1132,7 @@ export default function App() {
 
           {currentScreen === 'caixa' && (
             <CaixaScreen 
+              userProfile={userProfile}
               financeSummary={financialSummary}
               pendingPayments={pendingPayments}
               onNavigate={handleNavigate}
@@ -1150,6 +1151,7 @@ export default function App() {
 
           {currentScreen === 'avisos' && (
             <AvisosScreen 
+              userProfile={userProfile}
               notices={notices}
               onAddNotice={handleAddNotice}
               onEditNotice={handleEditNotice}

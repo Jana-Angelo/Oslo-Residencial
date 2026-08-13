@@ -5,7 +5,7 @@ import {
   Home,
   FileText,
   Megaphone,
-  Sparkles,
+  ThumbsUp,
   User,
   CreditCard,
   LogOut,
@@ -84,7 +84,7 @@ export default function MobileDrawer({ isOpen, isAdmin, onClose, onNavigate }: M
                 onClick={() => { onClose(); onNavigate('indica_apt', 'none'); }}
                 className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left cursor-pointer"
               >
-                <Sparkles className="w-4 h-4" />
+                <ThumbsUp className="w-4 h-4" />
                 <span>IndicaApt</span>
               </button>
 

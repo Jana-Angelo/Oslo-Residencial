@@ -3,7 +3,7 @@ import {
   Home,
   FileText,
   Megaphone,
-  Sparkles,
+  ThumbsUp,
   User,
   CreditCard,
   LogOut,
@@ -62,7 +62,7 @@ export default function Sidebar({ isAdmin, onNavigate }: SidebarProps) {
           aria-label="IndicaApt"
           className="w-full flex items-center justify-center xl:justify-start gap-3 px-0 xl:px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 shrink-0" />
+          <ThumbsUp className="w-4 h-4 shrink-0" />
           <span className="hidden xl:block">IndicaApt</span>
         </button>
 

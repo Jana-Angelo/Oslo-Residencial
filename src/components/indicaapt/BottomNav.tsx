@@ -1,4 +1,4 @@
-import { Home, Bell, Megaphone, Sparkles, User, LogOut } from 'lucide-react';
+import { Home, Bell, Megaphone, ThumbsUp, User, LogOut } from 'lucide-react';
 import { NavScreen } from './shared';
 
 interface BottomNavProps {
@@ -36,7 +36,7 @@ export default function BottomNav({ onNavigate }: BottomNavProps) {
         onClick={() => onNavigate('indica_apt', 'none')}
         className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
       >
-        <Sparkles className="w-5 h-5" />
+        <ThumbsUp className="w-5 h-5" />
         <span className="text-[10px] font-bold">IndicaApt</span>
       </button>
 

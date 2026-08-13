@@ -6,9 +6,10 @@ import {
   ArrowDownRight, 
   TrendingUp, 
   Bell, 
-  Sparkles, 
   User, 
+  ThumbsUp,
   Settings, 
+  ChevronDown,
   Home, 
   CreditCard,
   Search, 
@@ -24,9 +25,10 @@ import {
   Save,
   Megaphone,
 } from 'lucide-react';
-import { FinanceSummary, PendingPayment } from '../types';
+import { FinanceSummary, PendingPayment, UserProfile } from '../types';
 
 interface CaixaScreenProps {
+  userProfile: UserProfile;
   financeSummary: FinanceSummary;
   pendingPayments: PendingPayment[];
   onNavigate: (screen: 'login' | 'caixa' | 'avisos' | 'ocorrencias' | 'dashboard' | 'indica_apt' | 'perfil', transition: 'none' | 'push') => void;
@@ -43,6 +45,7 @@ interface CaixaScreenProps {
 }
 
 export default function CaixaScreen({ 
+  userProfile,
   financeSummary, 
   pendingPayments, 
   onNavigate, 
@@ -59,6 +62,7 @@ export default function CaixaScreen({
 }: CaixaScreenProps) {
   const [showAllPayments, setShowAllPayments] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Edit states
   const [editingBalance, setEditingBalance] = useState(false);
@@ -94,6 +98,7 @@ export default function CaixaScreen({
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
+  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
   const filteredPayments = pendingPayments.filter(pay => 
     pay.unit.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -304,10 +309,65 @@ export default function CaixaScreen({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="bg-[#8C7364]/10 text-[#8C7364] px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase">
-            Painel Admin
-          </div>
+        <div className="relative">
+          <button
+            onClick={() => setIsProfileOpen(v => !v)}
+            className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
+            aria-label="Abrir menu do perfil"
+            aria-expanded={isProfileOpen}
+          >
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
+              {userProfile.avatar ? (
+                <img
+                  src={userProfile.avatar}
+                  alt={userProfile.fullName}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <User className="w-5 h-5 text-[#8C7364]" />
+              )}
+            </div>
+            <div className="hidden md:block text-left min-w-0">
+              <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
+              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
+            </div>
+            <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          <AnimatePresence>
+            {isProfileOpen && (
+              <>
+                <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
+                >
+                  <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
+                    <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
+                      {userProfile.avatar ? (
+                        <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      ) : (
+                        <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
+                      <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
+                    </div>
+                  </div>
+                  <div className="p-1.5 flex flex-col gap-0.5">
+                    <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
+                    <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
+                    <div className="h-[1px] bg-[#EAE3D5] my-1" />
+                    <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </header>
 
@@ -349,7 +409,7 @@ export default function CaixaScreen({
             onClick={() => onNavigate('indica_apt', 'none')}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
           >
-            <Sparkles className="w-4 h-4 text-[#8C7364]" />
+            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
             <span>IndicaApt</span>
           </button>
 
@@ -382,7 +442,7 @@ export default function CaixaScreen({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full space-y-6">
+      <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-6xl mx-auto w-full space-y-4 md:space-y-6">
         
         {/* Title for mobile */}
         <div className="md:hidden">
@@ -1026,7 +1086,7 @@ export default function CaixaScreen({
           onClick={() => onNavigate('indica_apt', 'none')}
           className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
         >
-          <Sparkles className="w-5 h-5" />
+          <ThumbsUp className="w-5 h-5" />
           <span className="text-[10px] font-bold">IndicaApt</span>
         </button>
 
