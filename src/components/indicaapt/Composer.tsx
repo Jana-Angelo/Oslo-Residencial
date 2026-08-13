@@ -1,4 +1,4 @@
-import { Sparkles, Heart, Plus, Star, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { Sparkles, Heart, Plus, ThumbsUp, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { Avatar, SOCIAL_CATEGORY_OPTIONS } from './shared';
 
@@ -91,27 +91,18 @@ export default function Composer({
 
         {expanded && (
           <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <Avatar
-                name={userProfile.fullName}
-                apartment={userProfile.apartmentNumber}
-                src={userProfile.avatar}
-                className="w-10 h-10 text-base shrink-0"
-              />
-              <textarea
-                ref={composerRef}
-                rows={expanded ? 3 : 1}
-                value={comment}
-                onChange={e => onCommentChange(e.target.value)}
-                onFocus={onFocus}
-                placeholder="O que você recomenda aos seus vizinhos?"
-                className="flex-1 px-3.5 py-2.5 bg-[#FBF9F6] border border-[#E5DFD5] rounded-[14px] text-xs font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F] resize-none"
-              />
-            </div>
+            <div className="space-y-3 pt-1">
+              <div className="flex items-start gap-3">
+                <div className="pt-0.5 shrink-0">
+                  <Avatar
+                    name={userProfile.fullName}
+                    apartment={userProfile.apartmentNumber}
+                    src={userProfile.avatar}
+                    className="w-10 h-10 text-base"
+                  />
+                </div>
 
-            {expanded && (
-              <div className="space-y-3 pt-1">
-                <div className="space-y-1">
+                <div className="flex-1 min-w-0 space-y-1">
                   <label className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">
                     Para quem/quê é a indicação?
                   </label>
@@ -123,42 +114,99 @@ export default function Composer({
                     className="w-full px-3.5 py-2.5 bg-white border border-[#E5DFD5] rounded-[14px] text-xs font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
                   />
                 </div>
+              </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Categoria:</span>
-                  <select
-                    value={category}
-                    onChange={e => onCategoryChange(e.target.value)}
-                    className="px-3 py-2 bg-[#F5F2EB] text-[#8C7364] border border-transparent rounded-xl text-[10px] font-bold uppercase tracking-wider focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
-                  >
-                    {SOCIAL_CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                  </select>
+              <div className="flex items-start gap-3 pl-[52px]">
+                <textarea
+                  ref={composerRef}
+                  rows={expanded ? 3 : 1}
+                  value={comment}
+                  onChange={e => onCommentChange(e.target.value)}
+                  onFocus={onFocus}
+                  placeholder="O que você recomenda aos seus vizinhos?"
+                  className="flex-1 px-3.5 py-2.5 bg-[#FBF9F6] border border-[#E5DFD5] rounded-[14px] text-xs font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F] resize-none min-h-[84px]"
+                />
+              </div>
+            </div>
 
-                  {category === 'OUTROS' && (
-                    <input
-                      type="text"
-                      required
-                      placeholder="Nome da categoria"
-                      value={customCategory}
-                      onChange={e => onCustomCategoryChange(e.target.value)}
-                      className="px-3 py-2 bg-white border border-[#E5DFD5] rounded-[14px] text-[10px] font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F] flex-1 min-w-[140px]"
-                    />
-                  )}
+            {expanded && (
+              <div className="space-y-3 pt-1">
 
-                  <div className="flex items-center gap-0.5 ml-auto">
-                    {[1, 2, 3, 4, 5].map(star => (
+                <div className="flex flex-nowrap items-center justify-between gap-1.5 overflow-hidden">
+                  <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
+                    <span className="shrink-0 text-[9px] font-bold text-[#8C7364] uppercase tracking-wider">Categoria:</span>
+                    <select
+                      value={category}
+                      onChange={e => onCategoryChange(e.target.value)}
+                      className="min-w-[110px] max-w-[140px] shrink-0 px-2.5 py-1.5 bg-[#F5F2EB] text-[#8C7364] border border-transparent rounded-xl text-[9px] font-bold uppercase tracking-wider focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
+                    >
+                      {SOCIAL_CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+
+                    {category === 'OUTROS' && (
+                      <input
+                        type="text"
+                        required
+                        placeholder="Nome da categoria"
+                        value={customCategory}
+                        onChange={e => onCustomCategoryChange(e.target.value)}
+                        className="min-w-[120px] flex-1 px-2.5 py-1.5 bg-white border border-[#E5DFD5] rounded-[12px] text-[9px] font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
+                      />
+                    )}
+
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <input
+                        ref={fileRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={onAddImages}
+                        className="hidden"
+                      />
                       <button
-                        key={star}
                         type="button"
-                        onClick={() => onRatingChange(star)}
-                        aria-label={`Avaliar com ${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
-                        aria-pressed={star <= rating}
-                        title={`${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
-                        className="p-1 text-amber-400 hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                        onClick={() => fileRef.current?.click()}
+                        disabled={uploadingImg}
+                        className="flex items-center gap-1 px-2.5 py-1.5 bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364] rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait"
                       >
-                        <Star className={`w-4 h-4 ${star <= rating ? 'fill-current' : 'text-gray-300'}`} />
+                        <ImageIcon className="w-3.5 h-3.5" />
+                        {uploadingImg ? 'Enviando...' : 'Foto'}
                       </button>
-                    ))}
+                      <button
+                        type="button"
+                        onClick={onToggleLink}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors ${
+                          link ? 'bg-[#8C7364] text-white' : 'bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364]'
+                        }`}
+                      >
+                        <LinkIcon className="w-3.5 h-3.5" />
+                        Link
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {[
+                      { id: 4, label: 'Recomendo', icon: ThumbsUp, selected: rating >= 4 },
+                      { id: 5, label: 'Recomendo Muito', icon: Heart, selected: rating >= 5 },
+                    ].map(option => {
+                      const Icon = option.icon;
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => onRatingChange(option.id)}
+                          aria-pressed={option.selected}
+                          title={option.label}
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[9px] font-bold transition-all cursor-pointer whitespace-nowrap ${option.selected
+                            ? 'bg-[#967D6C] text-white border-[#967D6C] shadow-sm'
+                            : 'bg-[#F5F2EB] text-[#8C7364] border-[#EAE3D5] hover:bg-[#EAE3D5]'}`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          {option.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -194,35 +242,7 @@ export default function Composer({
                 {uploadError && <p className="text-[10px] text-red-500 font-bold">{uploadError}</p>}
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                  <div className="flex items-center gap-2">
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={onAddImages}
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      disabled={uploadingImg}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364] rounded-xl text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait"
-                    >
-                      <ImageIcon className="w-3.5 h-3.5" />
-                      {uploadingImg ? 'Enviando...' : 'Foto'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={onToggleLink}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors ${
-                        link ? 'bg-[#8C7364] text-white' : 'bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364]'
-                      }`}
-                    >
-                      <LinkIcon className="w-3.5 h-3.5" />
-                      Link
-                    </button>
-                  </div>
+                  <div className="flex items-center gap-2" />
 
                   <div className="flex items-center gap-2">
                     <button

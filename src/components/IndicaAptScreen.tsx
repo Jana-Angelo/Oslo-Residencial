@@ -313,6 +313,11 @@ export default function IndicaAptScreen({
     e.target.value = '';
   };
 
+  const handleEditRatingChange = (value: number) => {
+    setEditRating(value);
+    setEditingRec(prev => prev ? { ...prev, rating: value } : prev);
+  };
+
   const handleSaveEdit = () => {
     if (!editingRec) return;
     const finalCategory = editCategory === 'OUTROS' && editCustomCategory.trim()
@@ -526,7 +531,7 @@ export default function IndicaAptScreen({
         onCategoryChange={setEditCategory}
         onCustomCategoryChange={setEditCustomCategory}
         onCommentChange={setEditComment}
-        onRatingChange={setEditRating}
+        onRatingChange={handleEditRatingChange}
         onRemoveImage={handleEditImageRemove}
         onAddImages={handleEditImageAdd}
         onLinkChange={setEditLink}

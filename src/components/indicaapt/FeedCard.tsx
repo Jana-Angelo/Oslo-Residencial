@@ -153,13 +153,6 @@ export default function FeedCard({
                     >
                       Editar indicação
                     </button>
-                    <button
-                      onClick={() => onHide(rec)}
-                      className="w-full text-left px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer flex items-center gap-2"
-                    >
-                      <EyeOff className="w-3.5 h-3.5" />
-                      Ocultar indicação
-                    </button>
                     <div className="h-px bg-[#F5F2EB] my-0.5" />
                     <button
                       onClick={() => onAskDelete(rec.id)}
@@ -179,7 +172,11 @@ export default function FeedCard({
         {/* Left side: text info */}
         <div className="flex-1 min-w-0 space-y-3">
           <div className="flex items-center gap-1 text-rose-500 text-[10px] font-extrabold uppercase tracking-wider">
-            <Heart className="w-3.5 h-3.5 fill-current" />
+            {rec.rating >= 5 ? (
+              <Heart className="w-3.5 h-3.5 fill-current" />
+            ) : (
+              <ThumbsUp className="w-3.5 h-3.5 fill-current" />
+            )}
             <span>{recommendationType(rec)}</span>
           </div>
 
@@ -265,12 +262,7 @@ export default function FeedCard({
         {/* Right side: image */}
         {rec.images && rec.images.length > 0 && (
           <div className="shrink-0 w-full md:w-[260px] self-center md:self-start">
-            <img
-              src={rec.images[0]}
-              alt={rec.providerName}
-              onClick={() => onOpenImage(rec.images![0])}
-              className="w-full h-[150px] object-cover rounded-2xl cursor-pointer hover:opacity-90 transition-opacity border border-[#EAE3D5]"
-            />
+            <ImageCarousel images={rec.images} onOpen={onOpenImage} />
           </div>
         )}
       </div>

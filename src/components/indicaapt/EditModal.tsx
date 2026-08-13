@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'motion/react';
-import { X, Star, Image as ImageIcon } from 'lucide-react';
+import { X, Heart, ThumbsUp, Image as ImageIcon } from 'lucide-react';
 import { Recommendation } from '../../types';
 import { SOCIAL_CATEGORY_OPTIONS } from './shared';
 
@@ -102,20 +102,28 @@ export default function EditModal({
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Avaliação</label>
-              <div className="flex items-center gap-0.5 pt-1.5">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => onRatingChange(star)}
-                    aria-label={`Avaliar com ${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
-                    aria-pressed={star <= rating}
-                    title={`${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
-                    className="p-1 text-amber-400 hover:scale-110 active:scale-95 transition-transform cursor-pointer"
-                  >
-                    <Star className={`w-5 h-5 ${star <= rating ? 'fill-current' : 'text-gray-300'}`} />
-                  </button>
-                ))}
+              <div className="flex items-center gap-2 pt-1.5 flex-wrap">
+                {[
+                  { id: 4, label: 'Recomendo', icon: ThumbsUp, selected: rating >= 4 },
+                  { id: 5, label: 'Recomendo Muito', icon: Heart, selected: rating >= 5 },
+                ].map(option => {
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => onRatingChange(option.id)}
+                      aria-pressed={option.selected}
+                      title={option.label}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-[10px] font-bold transition-all cursor-pointer ${option.selected
+                        ? 'bg-[#967D6C] text-white border-[#967D6C] shadow-sm'
+                        : 'bg-[#F5F2EB] text-[#8C7364] border-[#EAE3D5] hover:bg-[#EAE3D5]'}`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {option.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -153,15 +161,6 @@ export default function EditModal({
               onChange={e => onLinkChange(e.target.value)}
               className="w-full px-3.5 py-2.5 bg-white border border-[#E5DFD5] rounded-[14px] text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
             />
-            {link && (
-              <input
-                type="text"
-                placeholder="Texto do link (ex: Ver site)"
-                value={linkText}
-                onChange={e => onLinkTextChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white border border-[#E5DFD5] rounded-[14px] text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F] mt-1"
-              />
-            )}
           </div>
 
           <div className="space-y-2">
