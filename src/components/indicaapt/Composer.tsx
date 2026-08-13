@@ -132,13 +132,13 @@ export default function Composer({
             {expanded && (
               <div className="space-y-3 pt-1">
 
-                <div className="flex flex-nowrap items-center justify-between gap-1.5 overflow-hidden">
-                  <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
                     <span className="shrink-0 text-[9px] font-bold text-[#8C7364] uppercase tracking-wider">Categoria:</span>
                     <select
                       value={category}
                       onChange={e => onCategoryChange(e.target.value)}
-                      className="min-w-[110px] max-w-[140px] shrink-0 px-2.5 py-1.5 bg-[#F5F2EB] text-[#8C7364] border border-transparent rounded-xl text-[9px] font-bold uppercase tracking-wider focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
+                      className="px-2 py-1 md:px-2.5 md:py-1.5 bg-[#F5F2EB] text-[#8C7364] border border-transparent rounded-xl text-[8px] md:text-[9px] font-bold uppercase tracking-wider focus:outline-none focus:ring-1 focus:ring-[#8C7364] cursor-pointer"
                     >
                       {SOCIAL_CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -150,11 +150,11 @@ export default function Composer({
                         placeholder="Nome da categoria"
                         value={customCategory}
                         onChange={e => onCustomCategoryChange(e.target.value)}
-                        className="min-w-[120px] flex-1 px-2.5 py-1.5 bg-white border border-[#E5DFD5] rounded-[12px] text-[9px] font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
+                        className="flex-1 min-w-[100px] px-2 py-1 md:px-2.5 md:py-1.5 bg-white border border-[#E5DFD5] rounded-[12px] text-[8px] md:text-[9px] font-medium placeholder-[#C1B5A9] focus:outline-none focus:ring-1 focus:ring-[#8C7364] text-[#3E342F]"
                       />
                     )}
 
-                    <div className="flex shrink-0 items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
                       <input
                         ref={fileRef}
                         type="file"
@@ -167,25 +167,25 @@ export default function Composer({
                         type="button"
                         onClick={() => fileRef.current?.click()}
                         disabled={uploadingImg}
-                        className="flex items-center gap-1 px-2.5 py-1.5 bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364] rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait"
+                        className="flex items-center gap-1 px-2 py-1 md:px-2.5 md:py-1.5 bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364] rounded-lg text-[8px] md:text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait whitespace-nowrap"
                       >
-                        <ImageIcon className="w-3.5 h-3.5" />
+                        <ImageIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
                         {uploadingImg ? 'Enviando...' : 'Foto'}
                       </button>
                       <button
                         type="button"
                         onClick={onToggleLink}
-                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors ${
+                        className={`flex items-center gap-1 px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg text-[8px] md:text-[9px] font-bold uppercase tracking-wider cursor-pointer transition-colors whitespace-nowrap ${
                           link ? 'bg-[#8C7364] text-white' : 'bg-[#F5F2EB] hover:bg-[#EAE3D5] text-[#8C7364]'
                         }`}
                       >
-                        <LinkIcon className="w-3.5 h-3.5" />
+                        <LinkIcon className="w-3 h-3 md:w-3.5 md:h-3.5" />
                         Link
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
                     {[
                       { id: 4, label: 'Recomendo', icon: ThumbsUp, selected: rating >= 4 },
                       { id: 5, label: 'Recomendo Muito', icon: Heart, selected: rating >= 5 },
@@ -198,11 +198,11 @@ export default function Composer({
                           onClick={() => onRatingChange(option.id)}
                           aria-pressed={option.selected}
                           title={option.label}
-                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[9px] font-bold transition-all cursor-pointer whitespace-nowrap ${option.selected
+                          className={`inline-flex items-center gap-0.5 md:gap-1 rounded-full border px-1.5 md:px-2 py-1 text-[8px] md:text-[9px] font-bold transition-all cursor-pointer whitespace-nowrap ${option.selected
                             ? 'bg-[#967D6C] text-white border-[#967D6C] shadow-sm'
                             : 'bg-[#F5F2EB] text-[#8C7364] border-[#EAE3D5] hover:bg-[#EAE3D5]'}`}
                         >
-                          <Icon className="w-3.5 h-3.5" />
+                          <Icon className="w-3 h-3 md:w-3.5 md:h-3.5" />
                           {option.label}
                         </button>
                       );

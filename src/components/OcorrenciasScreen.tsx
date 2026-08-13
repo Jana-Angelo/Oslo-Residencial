@@ -206,6 +206,7 @@ export default function OcorrenciasScreen({
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [toastOcc, setToastOcc] = useState<Ocorrencia | null>(null);
   const [summaryModal, setSummaryModal] = useState<{ kind: 'status' | 'category'; value: string } | null>(null);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
@@ -234,6 +235,8 @@ export default function OcorrenciasScreen({
 
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [adminMenuId, setAdminMenuId] = useState<string | null>(null);
+
+  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
 
   // ----- Views: increment once per post per session (module-level guard survives StrictMode) -----
   const viewedIds = useRef<Set<string>>(new Set());
@@ -548,21 +551,66 @@ export default function OcorrenciasScreen({
             </AnimatePresence>
           </div>
 
-          <button
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm cursor-pointer flex items-center justify-center bg-[#F5F2EB]"
-          >
-            {userProfile.avatar ? (
-              <img
-                src={userProfile.avatar}
-                alt={userProfile.fullName}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <User className="w-5 h-5 text-[#8C7364]" />
-            )}
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setIsProfileOpen(v => !v)}
+              className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
+              aria-label="Abrir menu do perfil"
+              aria-expanded={isProfileOpen}
+            >
+              <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
+                {userProfile.avatar ? (
+                  <img
+                    src={userProfile.avatar}
+                    alt={userProfile.fullName}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-[#8C7364]" />
+                )}
+              </div>
+              <div className="hidden md:block text-left min-w-0">
+                <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
+                <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
+              </div>
+              <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {isProfileOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                    className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
+                  >
+                    <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
+                      <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
+                        {userProfile.avatar ? (
+                          <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
+                        <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
+                      </div>
+                    </div>
+                    <div className="p-1.5 flex flex-col gap-0.5">
+                      <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
+                      <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
+                      <div className="h-[1px] bg-[#EAE3D5] my-1" />
+                      <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </header>
 
@@ -604,7 +652,7 @@ export default function OcorrenciasScreen({
             onClick={() => onNavigate('indica_apt', 'none')}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
           >
-            <Sparkles className="w-4 h-4 text-[#8C7364]" />
+            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
             <span>IndicaApt</span>
           </button>
 
@@ -639,7 +687,7 @@ export default function OcorrenciasScreen({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 max-w-[1184px] mx-auto w-full space-y-6">
+      <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-[1280px] mx-auto w-full space-y-4 md:space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-6">
           {/* Timeline column */}
           <div className="space-y-[18px] max-w-[860px] w-full">
@@ -1255,7 +1303,7 @@ export default function OcorrenciasScreen({
           onClick={() => onNavigate('indica_apt', 'none')}
           className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
         >
-          <Sparkles className="w-5 h-5" />
+          <ThumbsUp className="w-5 h-5" />
           <span className="text-[10px] font-bold">IndicaApt</span>
         </button>
 
