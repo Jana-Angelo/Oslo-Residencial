@@ -50,27 +50,12 @@ export default function Header({
     <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-3 flex items-center justify-between gap-3 md:px-8">
       <div className="flex items-center gap-3 min-w-0">
         <button
-          onClick={onToggleMobileMenu}
-          className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-          title="Menu"
-          aria-label="Abrir menu de navegação"
-          aria-expanded={isMobileMenuOpen}
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-        <button
           onClick={() => onNavigate('dashboard', 'none')}
           className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
           title="Voltar"
           aria-label="Voltar para o início"
         >
           <ArrowLeft className="w-6 h-6" />
-        </button>
-        <button
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-        >
-          <Home className="w-6 h-6" />
         </button>
         <div className="flex flex-col min-w-0">
           <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase hidden md:block">
