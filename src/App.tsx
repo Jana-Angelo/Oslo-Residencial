@@ -513,7 +513,8 @@ export default function App() {
   };
 
   // State modification handlers
-  const handleAddNotice = (newNotice: Notice) => {
+  const handleAddNotice = async (newNotice: Notice) => {
+    const previous = notices;
     const updated = [newNotice, ...notices];
     setNotices(updated);
     try {
@@ -521,20 +522,31 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
-    noticesService.create({
-      category: newNotice.category,
-      category_label: newNotice.categoryLabel,
-      title: newNotice.title,
-      description: newNotice.description,
-      date: newNotice.date,
-      time: newNotice.time,
-      author: newNotice.author,
-      author_role: newNotice.authorRole || null,
-      is_critical: newNotice.isCritical || false,
-      image_url: newNotice.image || null,
-      details: newNotice.details || null,
-      created_by: null,
-    }).catch(console.error);
+    try {
+      const result = await noticesService.create({
+        category: newNotice.category,
+        category_label: newNotice.categoryLabel,
+        title: newNotice.title,
+        description: newNotice.description,
+        date: newNotice.date,
+        time: newNotice.time,
+        author: newNotice.author,
+        author_role: newNotice.authorRole || null,
+        is_critical: newNotice.isCritical || false,
+        image_url: newNotice.image || null,
+        details: newNotice.details || null,
+        created_by: null,
+      });
+      if (!result) {
+        setNotices(previous);
+        try { localStorage.setItem('oslo_notices', JSON.stringify(previous)); } catch {}
+        alert('Erro ao publicar comunicado. Tente novamente.');
+      }
+    } catch {
+      setNotices(previous);
+      try { localStorage.setItem('oslo_notices', JSON.stringify(previous)); } catch {}
+      alert('Erro ao publicar comunicado. Verifique sua conexão.');
+    }
   };
 
   const handleEditNotice = (updatedNotice: Notice) => {
@@ -571,7 +583,8 @@ export default function App() {
     noticesService.delete(id).catch(console.error);
   };
 
-  const handleAddRecommendation = (newRec: Recommendation) => {
+  const handleAddRecommendation = async (newRec: Recommendation) => {
+    const previous = recommendations;
     const updated = [newRec, ...recommendations];
     setRecommendations(updated);
     try {
@@ -579,29 +592,40 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
-    recommendationsService.create({
-      apartment: newRec.apartment,
-      author_name: newRec.authorName || null,
-      author_avatar: newRec.authorAvatar || null,
-      author_role: newRec.authorRole || null,
-      provider_name: newRec.providerName,
-      category: newRec.category,
-      comment: newRec.comment,
-      rating: newRec.rating,
-      image_url: newRec.image || null,
-      images: newRec.images || [],
-      link: newRec.link || null,
-      link_text: newRec.linkText || null,
-      phone: newRec.phone || null,
-      likes: newRec.likes || 0,
-      liked_by: newRec.likedBy || [],
-      comments: newRec.comments || [],
-      views: newRec.views || 0,
-      viewed_by: newRec.viewedBy || [],
-      saved_by: newRec.savedBy || [],
-      hidden_by: newRec.hiddenBy || [],
-      created_by: null,
-    }).catch(console.error);
+    try {
+      const result = await recommendationsService.create({
+        apartment: newRec.apartment,
+        author_name: newRec.authorName || null,
+        author_avatar: newRec.authorAvatar || null,
+        author_role: newRec.authorRole || null,
+        provider_name: newRec.providerName,
+        category: newRec.category,
+        comment: newRec.comment,
+        rating: newRec.rating,
+        image_url: newRec.image || null,
+        images: newRec.images || [],
+        link: newRec.link || null,
+        link_text: newRec.linkText || null,
+        phone: newRec.phone || null,
+        likes: newRec.likes || 0,
+        liked_by: newRec.likedBy || [],
+        comments: newRec.comments || [],
+        views: newRec.views || 0,
+        viewed_by: newRec.viewedBy || [],
+        saved_by: newRec.savedBy || [],
+        hidden_by: newRec.hiddenBy || [],
+        created_by: null,
+      });
+      if (!result) {
+        setRecommendations(previous);
+        try { localStorage.setItem('oslo_recommendations', JSON.stringify(previous)); } catch {}
+        alert('Erro ao publicar indicação. Tente novamente.');
+      }
+    } catch {
+      setRecommendations(previous);
+      try { localStorage.setItem('oslo_recommendations', JSON.stringify(previous)); } catch {}
+      alert('Erro ao publicar indicação. Verifique sua conexão.');
+    }
   };
 
   const handleEditRecommendation = (updatedRec: Recommendation) => {
