@@ -26,6 +26,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { Notice, UserProfile } from '../types';
+import { LinkifiedText } from '../lib/linkify';
 
 interface AvisosScreenProps {
   userProfile: UserProfile;
@@ -213,7 +214,7 @@ export default function AvisosScreen({
                       <div key={n.id} className="px-4 py-3 border-b border-[#F5F2EB] last:border-0 hover:bg-[#F5F2EB]/50 transition-colors">
                         <p className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Novo aviso publicado</p>
                         <p className="text-xs font-extrabold text-[#3E342F] mt-0.5">{n.title}</p>
-                        <p className="text-xs text-[#6E6157] leading-relaxed mt-0.5 line-clamp-2">{n.description}</p>
+                        <p className="text-xs text-[#6E6157] leading-relaxed mt-0.5 line-clamp-2"><LinkifiedText text={n.description} /></p>
                         <p className="text-[10px] text-[#A6978A] font-semibold mt-1">{[n.date, n.time].filter(Boolean).join(' · ')}</p>
                       </div>
                     ))}
@@ -509,7 +510,7 @@ export default function AvisosScreen({
                         {notice.title}
                       </h3>
                       <p className="text-xs text-[#6E6157] leading-relaxed">
-                        {notice.description}
+                        <LinkifiedText text={notice.description} />
                       </p>
                       
                       {/* Accordion Details */}
