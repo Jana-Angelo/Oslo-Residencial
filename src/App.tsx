@@ -310,7 +310,6 @@ export default function App() {
   const fetchOcorrencias = async () => {
     try {
       const dbOcorrencias = await ocorrenciasService.getAll();
-      if (dbOcorrencias.length === 0) return;
       const mapped = dbOcorrencias.map((o: any) => ({
         id: o.id,
         description: o.description || '',
@@ -777,10 +776,20 @@ export default function App() {
     }).catch(console.error);
   };
 
-  const handleDeleteOcorrencia = (id: string) => {
+  const handleDeleteOcorrencia = async (id: string) => {
+    const previous = ocorrencias;
     const updated = ocorrencias.filter(o => o.id !== id);
     persistOcorrencias(updated);
-    ocorrenciasService.delete(id).catch(console.error);
+    try {
+      const success = await ocorrenciasService.delete(id);
+      if (!success) {
+        persistOcorrencias(previous);
+        alert('Erro ao excluir ocorrência. Tente novamente.');
+      }
+    } catch {
+      persistOcorrencias(previous);
+      alert('Erro ao excluir ocorrência. Verifique sua conexão.');
+    }
   };
 
   const handleToggleOcorrenciaLike = (id: string) => {
