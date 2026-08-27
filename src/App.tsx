@@ -29,6 +29,7 @@ import AvisosScreen from './components/AvisosScreen';
 import OcorrenciasScreen from './components/OcorrenciasScreen';
 import IndicaAptScreen from './components/IndicaAptScreen';
 import PerfilScreen from './components/PerfilScreen';
+import WelcomeOverlay, { hasSeenWelcome } from './components/WelcomeOverlay';
 
 const WEEKDAYS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -66,6 +67,7 @@ export default function App() {
     return 'login';
   });
   const [transitionType, setTransitionType] = useState<'none' | 'push'>('none');
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // Core global state for simulation
   const [notices, setNotices] = useState<Notice[]>(() => {
@@ -310,6 +312,7 @@ export default function App() {
   const fetchOcorrencias = async () => {
     try {
       const dbOcorrencias = await ocorrenciasService.getAll();
+      if (dbOcorrencias.length === 0) return;
       const mapped = dbOcorrencias.map((o: any) => ({
         id: o.id,
         description: o.description || '',
@@ -467,6 +470,9 @@ export default function App() {
   const handleLogin = async () => {
     setTransitionType('push');
     setCurrentScreen('dashboard');
+    if (!hasSeenWelcome()) {
+      setShowWelcome(true);
+    }
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.id) {
@@ -513,8 +519,7 @@ export default function App() {
   };
 
   // State modification handlers
-  const handleAddNotice = async (newNotice: Notice) => {
-    const previous = notices;
+  const handleAddNotice = (newNotice: Notice) => {
     const updated = [newNotice, ...notices];
     setNotices(updated);
     try {
@@ -522,31 +527,20 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
-    try {
-      const result = await noticesService.create({
-        category: newNotice.category,
-        category_label: newNotice.categoryLabel,
-        title: newNotice.title,
-        description: newNotice.description,
-        date: newNotice.date,
-        time: newNotice.time,
-        author: newNotice.author,
-        author_role: newNotice.authorRole || null,
-        is_critical: newNotice.isCritical || false,
-        image_url: newNotice.image || null,
-        details: newNotice.details || null,
-        created_by: null,
-      });
-      if (!result) {
-        setNotices(previous);
-        try { localStorage.setItem('oslo_notices', JSON.stringify(previous)); } catch {}
-        alert('Erro ao publicar comunicado. Tente novamente.');
-      }
-    } catch {
-      setNotices(previous);
-      try { localStorage.setItem('oslo_notices', JSON.stringify(previous)); } catch {}
-      alert('Erro ao publicar comunicado. Verifique sua conexão.');
-    }
+    noticesService.create({
+      category: newNotice.category,
+      category_label: newNotice.categoryLabel,
+      title: newNotice.title,
+      description: newNotice.description,
+      date: newNotice.date,
+      time: newNotice.time,
+      author: newNotice.author,
+      author_role: newNotice.authorRole || null,
+      is_critical: newNotice.isCritical || false,
+      image_url: newNotice.image || null,
+      details: newNotice.details || null,
+      created_by: null,
+    }).catch(console.error);
   };
 
   const handleEditNotice = (updatedNotice: Notice) => {
@@ -583,8 +577,7 @@ export default function App() {
     noticesService.delete(id).catch(console.error);
   };
 
-  const handleAddRecommendation = async (newRec: Recommendation) => {
-    const previous = recommendations;
+  const handleAddRecommendation = (newRec: Recommendation) => {
     const updated = [newRec, ...recommendations];
     setRecommendations(updated);
     try {
@@ -592,40 +585,29 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
-    try {
-      const result = await recommendationsService.create({
-        apartment: newRec.apartment,
-        author_name: newRec.authorName || null,
-        author_avatar: newRec.authorAvatar || null,
-        author_role: newRec.authorRole || null,
-        provider_name: newRec.providerName,
-        category: newRec.category,
-        comment: newRec.comment,
-        rating: newRec.rating,
-        image_url: newRec.image || null,
-        images: newRec.images || [],
-        link: newRec.link || null,
-        link_text: newRec.linkText || null,
-        phone: newRec.phone || null,
-        likes: newRec.likes || 0,
-        liked_by: newRec.likedBy || [],
-        comments: newRec.comments || [],
-        views: newRec.views || 0,
-        viewed_by: newRec.viewedBy || [],
-        saved_by: newRec.savedBy || [],
-        hidden_by: newRec.hiddenBy || [],
-        created_by: null,
-      });
-      if (!result) {
-        setRecommendations(previous);
-        try { localStorage.setItem('oslo_recommendations', JSON.stringify(previous)); } catch {}
-        alert('Erro ao publicar indicação. Tente novamente.');
-      }
-    } catch {
-      setRecommendations(previous);
-      try { localStorage.setItem('oslo_recommendations', JSON.stringify(previous)); } catch {}
-      alert('Erro ao publicar indicação. Verifique sua conexão.');
-    }
+    recommendationsService.create({
+      apartment: newRec.apartment,
+      author_name: newRec.authorName || null,
+      author_avatar: newRec.authorAvatar || null,
+      author_role: newRec.authorRole || null,
+      provider_name: newRec.providerName,
+      category: newRec.category,
+      comment: newRec.comment,
+      rating: newRec.rating,
+      image_url: newRec.image || null,
+      images: newRec.images || [],
+      link: newRec.link || null,
+      link_text: newRec.linkText || null,
+      phone: newRec.phone || null,
+      likes: newRec.likes || 0,
+      liked_by: newRec.likedBy || [],
+      comments: newRec.comments || [],
+      views: newRec.views || 0,
+      viewed_by: newRec.viewedBy || [],
+      saved_by: newRec.savedBy || [],
+      hidden_by: newRec.hiddenBy || [],
+      created_by: null,
+    }).catch(console.error);
   };
 
   const handleEditRecommendation = (updatedRec: Recommendation) => {
@@ -800,20 +782,10 @@ export default function App() {
     }).catch(console.error);
   };
 
-  const handleDeleteOcorrencia = async (id: string) => {
-    const previous = ocorrencias;
+  const handleDeleteOcorrencia = (id: string) => {
     const updated = ocorrencias.filter(o => o.id !== id);
     persistOcorrencias(updated);
-    try {
-      const success = await ocorrenciasService.delete(id);
-      if (!success) {
-        persistOcorrencias(previous);
-        alert('Erro ao excluir ocorrência. Tente novamente.');
-      }
-    } catch {
-      persistOcorrencias(previous);
-      alert('Erro ao excluir ocorrência. Verifique sua conexão.');
-    }
+    ocorrenciasService.delete(id).catch(console.error);
   };
 
   const handleToggleOcorrenciaLike = (id: string) => {
@@ -1127,6 +1099,9 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#FBF9F6]">
+      {showWelcome && (
+        <WelcomeOverlay onComplete={() => setShowWelcome(false)} />
+      )}
       <AnimatePresence mode="wait" custom={transitionType}>
         <motion.div
           key={currentScreen}

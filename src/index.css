@@ -4,13 +4,32 @@
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Brand palette */
+  --color-brand-50: #FBF9F6;
+  --color-brand-100: #F5F2EB;
+  --color-brand-200: #EAE3D5;
+  --color-brand-300: #CBBFB7;
+  --color-brand-400: #A6978A;
+  --color-brand-500: #8C7364;
+  --color-brand-600: #7A6355;
+  --color-brand-700: #6E6157;
+  --color-brand-800: #3E342F;
+  --color-brand-900: #2A231F;
+
+  /* Feature accent colors */
+  --color-accent-avisos: #D97706;
+  --color-accent-caixa: #059669;
+  --color-accent-ocorrencias: #EA580C;
+  --color-accent-indicaapt: #7C3AED;
+  --color-accent-perfil: #475569;
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
-    background-color: #FBF9F6;
-    color: #3E342F;
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-800);
   }
 }
 
@@ -20,20 +39,20 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F2EB;
+  background: var(--color-brand-100);
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBBFB7;
+  background: var(--color-brand-300);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8C7364;
+  background: var(--color-brand-500);
 }
 
 /* Accessibility: visible focus ring on all interactive elements */
 :where(button, a, input, select, textarea, [role="button"]):focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #FBF9F6, 0 0 0 4px #8C7364;
+  box-shadow: 0 0 0 2px var(--color-brand-50), 0 0 0 4px var(--color-brand-500);
   border-radius: 10px;
 }
 

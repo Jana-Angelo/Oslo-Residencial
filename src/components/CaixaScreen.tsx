@@ -1,30 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Building2, 
-  ArrowUpRight, 
-  ArrowDownRight, 
   TrendingUp, 
-  Bell, 
-  User, 
-  ThumbsUp,
-  Settings, 
-  ChevronDown,
-  Home, 
-  CreditCard,
   Search, 
-  FileText,
-  ChevronRight,
-  Menu,
-  LogOut,
-  ArrowLeft,
   Pencil,
   Trash2,
   X,
   Check,
   Save,
-  Megaphone,
+  CreditCard,
 } from 'lucide-react';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 import { FinanceSummary, PendingPayment, UserProfile } from '../types';
 
 interface CaixaScreenProps {
@@ -62,7 +48,6 @@ export default function CaixaScreen({
 }: CaixaScreenProps) {
   const [showAllPayments, setShowAllPayments] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Edit states
   const [editingBalance, setEditingBalance] = useState(false);
@@ -98,7 +83,6 @@ export default function CaixaScreen({
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
   const filteredPayments = pendingPayments.filter(pay => 
     pay.unit.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -283,163 +267,13 @@ export default function CaixaScreen({
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
       
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-            title="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-          >
-            <Home className="w-6 h-6" />
-          </button>
-          <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-[#3E342F] tracking-tight font-display">
-              Financeiro
-            </h1>
-            <p className="text-xs text-[#8C7364] font-medium hidden md:block">
-              Resumo geral da saúde financeira do Oslo Residencial
-            </p>
-          </div>
-        </div>
-
-        <div className="relative">
-          <button
-            onClick={() => setIsProfileOpen(v => !v)}
-            className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
-            aria-label="Abrir menu do perfil"
-            aria-expanded={isProfileOpen}
-          >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
-              {userProfile.avatar ? (
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.fullName}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <User className="w-5 h-5 text-[#8C7364]" />
-              )}
-            </div>
-            <div className="hidden md:block text-left min-w-0">
-              <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
-              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
-            </div>
-            <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          <AnimatePresence>
-            {isProfileOpen && (
-              <>
-                <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                >
-                  <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
-                    <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
-                      {userProfile.avatar ? (
-                        <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                        <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-                      <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
-                    </div>
-                  </div>
-                  <div className="p-1.5 flex flex-col gap-0.5">
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
-                    <div className="h-[1px] bg-[#EAE3D5] my-1" />
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
-      </header>
-
-      {/* Desktop Permanent Sidebar / Aside */}
-      <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-[#F5F2EB] border-r border-[#EAE3D5] hidden md:flex flex-col p-6">
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 bg-[#8C7364] text-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-[#3E342F] tracking-tight font-display">Oslo Admin</span>
-        </div>
-
-        <nav className="flex-1 space-y-1.5">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Home className="w-4 h-4 text-[#8C7364]" />
-            <span>Início</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('avisos', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <FileText className="w-4 h-4 text-[#8C7364]" />
-            <span>Avisos</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('ocorrencias', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Megaphone className="w-4 h-4 text-[#8C7364]" />
-            <span>Ocorrências</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('indica_apt', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-            <span>IndicaApt</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('caixa', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <CreditCard className="w-4 h-4" />
-            <span>Caixa do Prédio</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Settings className="w-4 h-4 text-[#8C7364]" />
-            <span>Configurações</span>
-          </button>
-        </nav>
-
-        <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
-          <button 
-            onClick={() => onNavigate('login', 'none')}
-            className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sair do Painel</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activeScreen="caixa" isAdmin={true} onNavigate={onNavigate} brand="Oslo Admin" />
+      <MobileHeader
+        title="Caixa do Prédio"
+        subtitle="Financeiro"
+        userProfile={userProfile}
+        onNavigate={onNavigate}
+      />
 
       {/* Main content */}
       <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-6xl mx-auto w-full space-y-4 md:space-y-6">
@@ -456,7 +290,7 @@ export default function CaixaScreen({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
           {/* Card 1: Saldo em Conta */}
-          <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-2 relative">
+          <div className="bg-emerald-50/30 border border-[#EAE3D5] border-l-4 border-l-emerald-500 rounded-2xl p-6 shadow-sm space-y-2 relative">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block">
                 Saldo em Conta
@@ -586,7 +420,7 @@ export default function CaixaScreen({
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-4 text-xs font-bold text-[#6E6157]">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-3 h-3 bg-[#8C7364] rounded-full"></span>
+                  <span className="w-3 h-3 bg-emerald-500 rounded-full"></span>
                   <span>Receita</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -716,7 +550,7 @@ export default function CaixaScreen({
                             initial={{ height: 0 }}
                             animate={{ height: incomeHeight }}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
-                            className="w-4 sm:w-5 bg-[#8C7364] rounded-t-xs hover:opacity-90 transition-opacity relative group"
+                            className="w-4 sm:w-5 bg-emerald-500 rounded-t-xs hover:opacity-90 transition-opacity relative group"
                           >
                             <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3E342F] text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                               Rec: {formatCurrency(data.income)}
@@ -899,6 +733,20 @@ export default function CaixaScreen({
             </div>
           )}
 
+          {displayedPayments.length === 0 && !isAddingPayment && (
+            <div className="flex flex-col items-center text-center py-10 px-6">
+              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
+                <CreditCard className="w-7 h-7 text-emerald-600" />
+              </div>
+              <h4 className="text-sm font-extrabold text-[#3E342F] font-display mb-1">
+                Nenhum pagamento registrado
+              </h4>
+              <p className="text-xs text-[#6E6157] font-medium max-w-xs leading-relaxed">
+                Quando houver pagamentos e despesas, eles aparecerão nesta lista. Use os botões acima para adicionar o primeiro registro.
+              </p>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
@@ -1056,56 +904,7 @@ export default function CaixaScreen({
 
       </main>
 
-      {/* Footer Nav for Mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
-        <button 
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Início</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('avisos', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Avisos</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('ocorrencias', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Megaphone className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ocorrências</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('indica_apt', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span className="text-[10px] font-bold">IndicaApt</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('perfil', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Perfil</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('login', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-red-600 hover:text-red-700 cursor-pointer w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Sair</span>
-        </button>
-      </nav>
+      <MobileBottomNav activeScreen="caixa" isAdmin={true} onNavigate={onNavigate} />
 
       {/* Delete Payment Confirmation Modal */}
       <AnimatePresence>

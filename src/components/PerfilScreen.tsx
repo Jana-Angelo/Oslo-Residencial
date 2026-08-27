@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Building2, 
   Camera, 
   ShieldCheck, 
   Lock, 
@@ -9,18 +8,11 @@ import {
   Eye, 
   EyeOff, 
   Save, 
-  Home, 
-  Bell, 
   User,
-  ThumbsUp,
-  ChevronDown,
   AlertTriangle,
-  LogOut,
-  ArrowLeft,
   X,
-  Megaphone,
-  CreditCard,
 } from 'lucide-react';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 import { UserProfile } from '../types';
 import { APARTMENT_OPTIONS } from '../data';
 import { authService } from '../lib/database';
@@ -40,7 +32,6 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
   
   // New Password Reset Popup States
   const [isResetPopupOpen, setIsResetPopupOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -285,167 +276,16 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
     }
   };
 
-  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
-
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
       
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-            title="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-          >
-            <Home className="w-6 h-6" />
-          </button>
-          <div className="flex flex-col">
-            <h1 className="text-xl font-extrabold text-[#3E342F] tracking-tight font-display">
-              Oslo Residencial
-            </h1>
-          </div>
-        </div>
-
-        <div className="relative">
-          <button
-            onClick={() => setIsProfileOpen(v => !v)}
-            className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
-            aria-label="Abrir menu do perfil"
-            aria-expanded={isProfileOpen}
-          >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
-              {userProfile.avatar ? (
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.fullName}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <User className="w-5 h-5 text-[#8C7364]" />
-              )}
-            </div>
-            <div className="hidden md:block text-left min-w-0">
-              <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
-              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
-            </div>
-            <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          <AnimatePresence>
-            {isProfileOpen && (
-              <>
-                <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                >
-                  <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
-                    <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
-                      {userProfile.avatar ? (
-                        <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                        <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-                      <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
-                    </div>
-                  </div>
-                  <div className="p-1.5 flex flex-col gap-0.5">
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
-                    <div className="h-[1px] bg-[#EAE3D5] my-1" />
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
-      </header>
-
-      {/* Desktop Sidebar (Permanent) */}
-      <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-[#F5F2EB] border-r border-[#EAE3D5] hidden md:flex flex-col p-6">
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 bg-[#8C7364] text-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-[#3E342F] tracking-tight font-display">Oslo Portal</span>
-        </div>
-
-        <nav className="flex-1 space-y-1.5">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Home className="w-4 h-4 text-[#8C7364]" />
-            <span>Início</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('avisos', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Bell className="w-4 h-4 text-[#8C7364]" />
-            <span>Avisos</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('ocorrencias', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Megaphone className="w-4 h-4 text-[#8C7364]" />
-            <span>Ocorrências</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('indica_apt', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-            <span>IndicaApt</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <User className="w-4 h-4" />
-            <span>Perfil</span>
-          </button>
-
-          {isAdmin && (
-            <button 
-              onClick={() => onNavigate('caixa', 'push')}
-              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-            >
-              <CreditCard className="w-4 h-4 text-[#8C7364]" />
-              <span>Caixa do Prédio</span>
-            </button>
-          )}
-        </nav>
-
-        <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
-          <button 
-            onClick={() => onNavigate('login', 'none')}
-            className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sair do Portal</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activeScreen="perfil" isAdmin={isAdmin} onNavigate={onNavigate} />
+      <MobileHeader
+        title="Meu Perfil"
+        subtitle="Dados e Configurações"
+        userProfile={userProfile}
+        onNavigate={onNavigate}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-2xl mx-auto w-full space-y-4 md:space-y-6">
@@ -456,8 +296,24 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
           </div>
         )}
 
+        {!avatar && (
+          <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800">
+            <Camera className="w-5 h-5 shrink-0" />
+            <p className="text-xs font-medium flex-1">
+              Adicione uma foto ao seu perfil para que seus vizinhos possam te reconhecer.
+            </p>
+            <button
+              type="button"
+              onClick={handleUploadClick}
+              className="shrink-0 px-3 py-1.5 bg-amber-200/60 hover:bg-amber-200 text-amber-900 font-bold text-[10px] uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+            >
+              Adicionar foto
+            </button>
+          </div>
+        )}
+
         {/* 1. User Identity Card */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-5">
+        <div className="bg-white border border-[#EAE3D5] border-t-4 border-t-slate-400 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-5">
           <input 
             type="file"
             ref={fileInputRef}
@@ -514,7 +370,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
             <h3 className="text-xl font-extrabold text-[#3E342F] font-display">
               {fullName}
             </h3>
-            <span className="inline-block px-3 py-1 bg-[#F5F2EB] text-[#8C7364] text-[9px] font-bold tracking-wider uppercase rounded-full border border-[#E5DFD5]">
+            <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-[9px] font-bold tracking-wider uppercase rounded-full border border-emerald-200">
               {isAdmin ? "ADMINISTRATOR / SÍNDICO" : "MORADOR"}
             </span>
           </div>
@@ -522,7 +378,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
 
         {/* 2. Access Privileges Card */}
         <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2">
             Privilégios de Acesso
           </h4>
           
@@ -551,7 +407,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
 
         {/* 3. Account Settings Form Card */}
         <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-b border-[#F5F2EB] pb-2">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2 border-b border-[#F5F2EB] pb-2">
             Configurações da Conta
           </h4>
 
@@ -621,7 +477,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
 
         {/* 4. Permissões de Usuário */}
         <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-b border-[#F5F2EB] pb-2">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2 border-b border-[#F5F2EB] pb-2">
             Permissões de Usuário
           </h4>
 
@@ -652,64 +508,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
 
       </main>
 
-      {/* Footer Navigation for Perfil e Configurações Screen */}
-      {/* Must contain exactly these selectors to satisfy: */}
-      {/* //nav//span[contains(text(), 'Home')]/.. */}
-      {/* //nav//span[contains(text(), 'Notices')]/.. */}
-      {/* //nav//span[contains(text(), 'Services')]/.. */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
-        
-        <button 
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Home className="w-5 h-5" />
-          <span className="sr-only">Home</span>
-          <span className="text-[10px] font-bold">Início</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('avisos', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="sr-only">Notices</span>
-          <span className="text-[10px] font-bold">Avisos</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('ocorrencias', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Megaphone className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ocorrências</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('indica_apt', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span className="sr-only">Services</span>
-          <span className="text-[10px] font-bold">IndicaApt</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('perfil', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Perfil</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('login', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-red-600 hover:text-red-700 cursor-pointer w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Sair</span>
-        </button>
-      </nav>
+      <MobileBottomNav activeScreen="perfil" isAdmin={isAdmin} onNavigate={onNavigate} />
 
       {/* Reset Password Modal */}
       <AnimatePresence>

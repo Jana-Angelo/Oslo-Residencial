@@ -3,14 +3,11 @@ import { Plus } from 'lucide-react';
 import { Recommendation, UserProfile, OcorrenciaComment } from '../types';
 import { storageService } from '../lib/storage';
 import { NavScreen, formCategoryFor, getLocalProfiles, filterGroup } from './indicaapt/shared';
-import Header from './indicaapt/Header';
-import Sidebar from './indicaapt/Sidebar';
-import MobileDrawer from './indicaapt/MobileDrawer';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 import FeedSection from './indicaapt/FeedSection';
 import DiscoveryColumn from './indicaapt/DiscoveryColumn';
 import EditModal from './indicaapt/EditModal';
 import DeleteModal from './indicaapt/DeleteModal';
-import BottomNav from './indicaapt/BottomNav';
 import Toast from './indicaapt/Toast';
 import Lightbox from './indicaapt/Lightbox';
 
@@ -49,7 +46,6 @@ export default function IndicaAptScreen({
 }: IndicaAptScreenProps) {
   const isAdmin = userProfile.isAdmin !== false && (userProfile.role === 'Administrador' || userProfile.role === 'Síndico' || userProfile.isAdmin === true);
   const userKey = userProfile.apartmentNumber || userProfile.fullName || 'morador';
-  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
 
   // Feed state
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,14 +54,11 @@ export default function IndicaAptScreen({
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [cardMenuId, setCardMenuId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [expandedTexts, setExpandedTexts] = useState<Set<string>>(new Set());
   const [endorsersOpen, setEndorsersOpen] = useState<string | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Composer state
   const [composerFocused, setComposerFocused] = useState(false);
@@ -120,10 +113,7 @@ export default function IndicaAptScreen({
       if (e.key === 'Escape') {
         setDeleteConfirmId(null);
         setLightboxImage(null);
-        setIsMobileMenuOpen(false);
         setCardMenuId(null);
-        setIsNotificationsOpen(false);
-        setIsProfileOpen(false);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -399,35 +389,16 @@ export default function IndicaAptScreen({
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-16 xl:pl-60">
 
-      {/* Header */}
-      <Header
+      {/* Sidebar */}
+      <Sidebar activeScreen="indica_apt" isAdmin={isAdmin} onNavigate={onNavigate} />
+
+      {/* Mobile Header */}
+      <MobileHeader
+        title="IndicaApt"
+        subtitle="Indique e Ganhe"
         userProfile={userProfile}
-        firstName={firstName}
-        visibleRecs={visibleRecs}
-        hasNotifications={recommendations.length > 0}
-        isNotificationsOpen={isNotificationsOpen}
-        isProfileOpen={isProfileOpen}
-        isMobileMenuOpen={isMobileMenuOpen}
-        onToggleNotifications={() => setIsNotificationsOpen(v => !v)}
-        onToggleProfile={() => setIsProfileOpen(v => !v)}
-        onToggleMobileMenu={() => setIsMobileMenuOpen(v => !v)}
-        onCloseProfile={() => setIsProfileOpen(false)}
-        onCloseNotifications={() => setIsNotificationsOpen(false)}
-        onShowMine={() => { setActiveFilter('MINHAS'); setSearchTerm(''); }}
-        onFocusComposer={focusComposer}
         onNavigate={onNavigate}
       />
-
-      {/* Mobile menu drawer */}
-      <MobileDrawer
-        isOpen={isMobileMenuOpen}
-        isAdmin={isAdmin}
-        onClose={() => setIsMobileMenuOpen(false)}
-        onNavigate={onNavigate}
-      />
-
-      {/* Desktop Sidebar */}
-      <Sidebar isAdmin={isAdmin} onNavigate={onNavigate} />
 
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 max-w-[1400px] mx-auto w-full space-y-6">
@@ -565,8 +536,8 @@ export default function IndicaAptScreen({
         </button>
       )}
 
-      {/* Bottom mobile nav */}
-      <BottomNav onNavigate={onNavigate} />
+      {/* Mobile bottom nav */}
+      <MobileBottomNav activeScreen="indica_apt" isAdmin={isAdmin} onNavigate={onNavigate} />
 
       {/* Toast */}
       <Toast toast={toast} onClose={() => setToast(null)} />
