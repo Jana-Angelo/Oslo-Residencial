@@ -2,10 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Building2,
-  Home,
   User,
-  Bell,
-  LogOut,
   Plus,
   X,
   Search,
@@ -16,32 +13,26 @@ import {
   MessageSquare,
   Pin,
   Star,
-  Pencil,
   Trash2,
   CheckCircle2,
-  Clock,
   ImagePlus,
   ChevronDown,
-  ChevronUp,
   Wrench,
   Sparkles,
-  FileText,
   ShieldAlert,
   Shield,
   Droplets,
-  ArrowLeft,
   Zap,
   BrushCleaning,
   Volume2,
   Megaphone,
   MoreHorizontal,
   Info,
-  Filter,
   MoreVertical,
   Calendar,
   SlidersHorizontal,
-  CreditCard,
 } from 'lucide-react';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 import { Ocorrencia, OcorrenciaComment, OcorrenciaStatus, UserProfile } from '../types';
 import { storageService } from '../lib/storage';
 
@@ -205,8 +196,6 @@ export default function OcorrenciasScreen({
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [toastOcc, setToastOcc] = useState<Ocorrencia | null>(null);
   const [summaryModal, setSummaryModal] = useState<{ kind: 'status' | 'category'; value: string } | null>(null);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
@@ -235,8 +224,6 @@ export default function OcorrenciasScreen({
 
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [adminMenuId, setAdminMenuId] = useState<string | null>(null);
-
-  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
 
   // ----- Views: increment once per post per session (module-level guard survives StrictMode) -----
   const viewedIds = useRef<Set<string>>(new Set());
@@ -486,205 +473,13 @@ export default function OcorrenciasScreen({
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-            title="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-          >
-            <Home className="w-6 h-6" />
-          </button>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Comunidade Oslo</span>
-            <h1 className="text-xl font-extrabold text-[#3E342F] tracking-tight font-display">
-              Ocorrências
-            </h1>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <button
-              onClick={() => setIsNotificationsOpen(v => !v)}
-              className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-full transition-colors relative cursor-pointer"
-              title="Notificações"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#FBF9F6]"></span>
-            </button>
-
-            <AnimatePresence>
-              {isNotificationsOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="absolute right-0 mt-2 w-80 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden"
-                >
-                  <div className="px-4 py-3 border-b border-[#EAE3D5] flex items-center justify-between">
-                    <h4 className="font-extrabold text-xs text-[#3E342F] uppercase tracking-wider">Notificações</h4>
-                    <span className="text-[9px] font-bold text-[#8C7364] uppercase">Push para todos</span>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {sorted.slice(0, 5).map(o => (
-                      <div key={o.id} className="px-4 py-3 border-b border-[#F5F2EB] last:border-0 hover:bg-[#F5F2EB]/50 transition-colors">
-                        <p className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Nova ocorrência registrada</p>
-                        <p className="text-xs font-extrabold text-[#3E342F] mt-0.5">{o.apartment}</p>
-                        <p className="text-xs text-[#6E6157] leading-relaxed mt-0.5 line-clamp-2">{o.description}</p>
-                        <p className="text-[10px] text-[#A6978A] font-semibold mt-1">{formatRelativeTime(o.createdAt)}</p>
-                      </div>
-                    ))}
-                    {ocorrencias.length === 0 && (
-                      <p className="px-4 py-6 text-center text-xs text-[#A6978A]">Nenhuma notificação.</p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => setIsProfileOpen(v => !v)}
-              className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
-              aria-label="Abrir menu do perfil"
-              aria-expanded={isProfileOpen}
-            >
-              <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
-                {userProfile.avatar ? (
-                  <img
-                    src={userProfile.avatar}
-                    alt={userProfile.fullName}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <User className="w-5 h-5 text-[#8C7364]" />
-                )}
-              </div>
-              <div className="hidden md:block text-left min-w-0">
-                <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
-                <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
-              </div>
-              <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            <AnimatePresence>
-              {isProfileOpen && (
-                <>
-                  <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                    className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                  >
-                    <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
-                      <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
-                        {userProfile.avatar ? (
-                          <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                        ) : (
-                          <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-                        <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
-                      </div>
-                    </div>
-                    <div className="p-1.5 flex flex-col gap-0.5">
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
-                      <div className="h-[1px] bg-[#EAE3D5] my-1" />
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </header>
-
-      {/* Desktop Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-[#F5F2EB] border-r border-[#EAE3D5] hidden md:flex flex-col p-6">
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 bg-[#8C7364] text-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-[#3E342F] tracking-tight font-display">Oslo Portal</span>
-        </div>
-
-        <nav className="flex-1 space-y-1.5">
-          <button
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Home className="w-4 h-4 text-[#8C7364]" />
-            <span>Início</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate('avisos', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <FileText className="w-4 h-4 text-[#8C7364]" />
-            <span>Avisos</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate('ocorrencias', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Megaphone className="w-4 h-4" />
-            <span>Ocorrências</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate('indica_apt', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-            <span>IndicaApt</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <User className="w-4 h-4 text-[#8C7364]" />
-            <span>Perfil</span>
-          </button>
-
-          {isAdmin && (
-            <button
-              onClick={() => onNavigate('caixa', 'push')}
-              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-            >
-              <CreditCard className="w-4 h-4 text-[#8C7364]" />
-              <span>Caixa do Prédio</span>
-            </button>
-          )}
-        </nav>
-
-        <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
-          <button
-            onClick={() => onNavigate('login', 'none')}
-            className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sair do Portal</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activeScreen="ocorrencias" isAdmin={isAdmin} onNavigate={onNavigate} />
+      <MobileHeader
+        title="Ocorrências"
+        subtitle="Registro e Acompanhamento"
+        userProfile={userProfile}
+        onNavigate={onNavigate}
+      />
 
       {/* Main Content */}
       <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-[1280px] mx-auto w-full space-y-4 md:space-y-6">
@@ -693,13 +488,16 @@ export default function OcorrenciasScreen({
           <div className="space-y-[18px] max-w-[860px] w-full">
             {/* Redesigned Header Area */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-extrabold text-[#3E342F] tracking-tight font-display">Ocorrências</h2>
-                <p className="text-xs text-[#8C7364] font-medium mt-1">Compartilhe uma ocorrência importante.</p>
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-10 rounded-full bg-orange-400" />
+                <div>
+                  <h2 className="text-3xl font-extrabold text-[#3E342F] tracking-tight font-display">Ocorrências</h2>
+                  <p className="text-xs text-[#8C7364] font-medium mt-1">Compartilhe uma ocorrência importante.</p>
+                </div>
               </div>
               <button
                 onClick={() => setIsComposerOpen(prev => !prev)}
-                className="self-start sm:self-auto flex items-center gap-1.5 px-5 py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer shadow-sm"
+                className="self-start sm:self-auto flex items-center gap-1.5 px-5 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 Nova publicação
@@ -797,7 +595,7 @@ export default function OcorrenciasScreen({
                           type="button"
                           onClick={handlePublish}
                           disabled={!newDescription.trim()}
-                          className="px-5 py-2 bg-[#8C7364] hover:bg-[#7A6355] text-white rounded-xl text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           Publicar
                         </button>
@@ -929,7 +727,7 @@ export default function OcorrenciasScreen({
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className={`bg-white rounded-[18px] overflow-hidden border-[1px] min-h-[220px] transition-shadow shadow-[0_8px_30px_rgba(0,0,0,0.05)] relative ${
+                      className={`bg-white rounded-[18px] overflow-hidden border-[1px] border-l-[3px] border-l-orange-400 min-h-[220px] transition-shadow shadow-[0_8px_30px_rgba(0,0,0,0.05)] relative ${
                         occ.pinned
                           ? 'border-[#CBBFB7]'
                           : 'border-[#EAE3D5]'
@@ -1169,9 +967,31 @@ export default function OcorrenciasScreen({
               </AnimatePresence>
 
               {sorted.length === 0 && (
-                <div className="text-center py-12 bg-white rounded-2xl border border-[#EAE3D5] p-6 space-y-2">
-                  <p className="text-sm font-bold text-[#3E342F]">Nenhuma ocorrência encontrada</p>
-                  <p className="text-xs text-[#8C7364]">Ajuste os filtros ou publique a primeira ocorrência do condomínio.</p>
+                <div className="text-center py-14 bg-white rounded-2xl border border-[#EAE3D5] p-8 space-y-4 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                    <div className="absolute top-6 left-8 w-1.5 h-1.5 rounded-full bg-[#8C7364]" />
+                    <div className="absolute top-12 right-12 w-1 h-1 rounded-full bg-[#8C7364]" />
+                    <div className="absolute bottom-10 left-16 w-1 h-1 rounded-full bg-[#8C7364]" />
+                    <div className="absolute top-20 left-1/3 w-1.5 h-1.5 rounded-full bg-[#8C7364]" />
+                    <div className="absolute bottom-6 right-1/4 w-1 h-1 rounded-full bg-[#8C7364]" />
+                    <div className="absolute top-1/2 left-6 w-1 h-1 rounded-full bg-[#8C7364]" />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center">
+                      <Megaphone className="w-7 h-7 text-orange-400" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 relative z-10">
+                    <h3 className="text-sm font-extrabold text-[#3E342F] font-display">Nenhuma ocorrência ainda</h3>
+                    <p className="text-xs text-[#8C7364] max-w-[280px] mx-auto leading-relaxed">
+                      Seja o primeiro a registrar uma ocorrência no condomínio. Sua participação ajuda todos os moradores.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-1 pt-1 relative z-10">
+                    <div className="w-8 h-[2px] rounded-full bg-[#EAE3D5]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#D4C9BB]" />
+                    <div className="w-8 h-[2px] rounded-full bg-[#EAE3D5]" />
+                  </div>
                 </div>
               )}
             </div>
@@ -1273,56 +1093,7 @@ export default function OcorrenciasScreen({
         </div>
       </main>
 
-      {/* Bottom mobile nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
-        <button
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Início</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('ocorrencias', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
-        >
-          <Megaphone className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ocorr.</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('avisos', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Avisos</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('indica_apt', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span className="text-[10px] font-bold">IndicaApt</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('perfil', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Perfil</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('login', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-red-600 hover:text-red-700 cursor-pointer w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Sair</span>
-        </button>
-      </nav>
+      <MobileBottomNav activeScreen="ocorrencias" isAdmin={isAdmin} onNavigate={onNavigate} />
 
       {/* Edit modal */}
       {editingOcc && (

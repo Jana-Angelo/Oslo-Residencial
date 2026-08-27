@@ -1,32 +1,23 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Building2, 
-  Plus, 
-  Wrench, 
-  Users, 
-  ShieldAlert, 
-  Sparkles, 
-  ThumbsUp,
-  Bell, 
-  Calendar, 
+import {
+  Plus,
+  Wrench,
+  Users,
+  ShieldAlert,
+  Sparkles,
+  Bell,
   Clock,
-  X, 
-  ChevronDown, 
-  ChevronUp, 
-  Home, 
-  User,
-  FileText,
-  LogOut,
-  ArrowLeft,
+  X,
+  ChevronDown,
+  ChevronUp,
   Pencil,
   Trash2,
   Search,
-  Megaphone,
-  CreditCard,
 } from 'lucide-react';
 import { Notice, UserProfile } from '../types';
 import { LinkifiedText } from '../lib/linkify';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 
 interface AvisosScreenProps {
   userProfile: UserProfile;
@@ -58,14 +49,11 @@ export default function AvisosScreen({
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newCat, setNewCat] = useState<string>('Manutenção');
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
   const [newAuthor, setNewAuthor] = useState('Morador do Oslo');
   const [isCritical, setIsCritical] = useState(false);
 
   const defaultCategories = ['Todos', 'Manutenção', 'Reuniões', 'Social', 'Segurança'];
-  const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
   const categories = [
     ...defaultCategories,
     ...Array.from(new Set(notices.map(n => n.category)))
@@ -160,216 +148,25 @@ export default function AvisosScreen({
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
       
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-            title="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors md:hidden cursor-pointer"
-          >
-            <Home className="w-6 h-6" />
-          </button>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">Comunicação Oficial</span>
-            <h1 className="text-xl font-extrabold text-[#3E342F] tracking-tight font-display">
-              Quadro de Avisos
-            </h1>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <button
-              onClick={() => setIsNotificationsOpen(v => !v)}
-              className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-full transition-colors relative cursor-pointer"
-              title="Notificações"
-              aria-label="Abrir notificações"
-              aria-expanded={isNotificationsOpen}
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#FBF9F6]"></span>
-            </button>
-
-            <AnimatePresence>
-              {isNotificationsOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="absolute right-0 mt-2 w-80 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                >
-                  <div className="px-4 py-3 border-b border-[#EAE3D5] flex items-center justify-between">
-                    <h4 className="font-extrabold text-xs text-[#3E342F] uppercase tracking-wider">Notificações</h4>
-                    <span className="text-[9px] font-bold text-[#8C7364] uppercase">Comunicados</span>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notices.slice(0, 5).map(n => (
-                      <div key={n.id} className="px-4 py-3 border-b border-[#F5F2EB] last:border-0 hover:bg-[#F5F2EB]/50 transition-colors">
-                        <p className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Novo aviso publicado</p>
-                        <p className="text-xs font-extrabold text-[#3E342F] mt-0.5">{n.title}</p>
-                        <p className="text-xs text-[#6E6157] leading-relaxed mt-0.5 line-clamp-2 whitespace-pre-line"><LinkifiedText text={n.description} /></p>
-                        <p className="text-[10px] text-[#A6978A] font-semibold mt-1">{[n.date, n.time].filter(Boolean).join(' · ')}</p>
-                      </div>
-                    ))}
-                    {notices.length === 0 && (
-                      <p className="px-4 py-6 text-center text-xs text-[#A6978A]">Nenhuma notificação.</p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => setIsProfileOpen(v => !v)}
-            className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
-            aria-label="Abrir menu do perfil"
-            aria-expanded={isProfileOpen}
-          >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
-              {userProfile.avatar ? (
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.fullName}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <User className="w-5 h-5 text-[#8C7364]" />
-              )}
-            </div>
-            <div className="hidden md:block text-left min-w-0">
-              <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
-              <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
-            </div>
-            <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          <AnimatePresence>
-            {isProfileOpen && (
-              <>
-                <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                  className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                >
-                  <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
-                    <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
-                      {userProfile.avatar ? (
-                        <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                        <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-                      <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
-                    </div>
-                  </div>
-                  <div className="p-1.5 flex flex-col gap-0.5">
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
-                    <div className="h-[1px] bg-[#EAE3D5] my-1" />
-                    <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
-                  </div>
-                </motion.div>
-              </>
-            )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </header>
-
-      {/* Desktop Sidebar (Permanent) */}
-      <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-[#F5F2EB] border-r border-[#EAE3D5] hidden md:flex flex-col p-6">
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 bg-[#8C7364] text-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-[#3E342F] tracking-tight font-display">Oslo Portal</span>
-        </div>
-
-        <nav className="flex-1 space-y-1.5">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Home className="w-4 h-4 text-[#8C7364]" />
-            <span>Início</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('avisos', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <FileText className="w-4 h-4" />
-            <span>Avisos</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('ocorrencias', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Megaphone className="w-4 h-4 text-[#8C7364]" />
-            <span>Ocorrências</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('indica_apt', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-            <span>IndicaApt</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <User className="w-4 h-4 text-[#8C7364]" />
-            <span>Perfil</span>
-          </button>
-
-          {isAdmin && (
-            <button 
-              onClick={() => onNavigate('caixa', 'push')}
-              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-            >
-              <CreditCard className="w-4 h-4 text-[#8C7364]" />
-              <span>Caixa do Prédio</span>
-            </button>
-          )}
-        </nav>
-
-        <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
-          <button 
-            onClick={() => onNavigate('login', 'none')}
-            className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sair do Portal</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activeScreen="avisos" isAdmin={isAdmin} onNavigate={onNavigate} />
+      <MobileHeader
+        title="Avisos"
+        subtitle="Comunicados"
+        userProfile={userProfile}
+        onNavigate={onNavigate}
+      />
 
       {/* Main Content */}
       <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-[960px] mx-auto w-full space-y-4 md:space-y-[18px]">
         
         {/* Action Button: "+ Novo Comunicado" */}
         <div className="flex justify-between items-center">
-          <p className="text-xs text-[#8C7364] font-semibold uppercase tracking-wider hidden sm:block">
-            {filteredNotices.length} avisos publicados
-          </p>
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="w-1 h-5 bg-amber-400 rounded-full" />
+            <p className="text-xs text-[#8C7364] font-semibold uppercase tracking-wider">
+              {filteredNotices.length} avisos publicados
+            </p>
+          </div>
           {isAdmin && (
             <button 
               onClick={() => setIsModalOpen(true)}
@@ -390,8 +187,8 @@ export default function AvisosScreen({
               onClick={() => setActiveCategory('Todos')}
               className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
                 activeCategory === 'Todos' 
-                  ? 'bg-[#8C7364] text-white shadow-sm' 
-                  : 'bg-[#F5F2EB] text-[#8C7364] hover:bg-[#EAE3D5]'
+                  ? 'bg-amber-100 text-amber-800 border border-amber-300 shadow-sm' 
+                  : 'bg-[#F5F2EB] text-[#8C7364] hover:bg-[#EAE3D5] border border-transparent'
               }`}
             >
               Todos
@@ -405,8 +202,8 @@ export default function AvisosScreen({
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
                     activeCategory === cat 
-                      ? 'bg-[#8C7364] text-white shadow-sm' 
-                      : 'bg-[#F5F2EB] text-[#8C7364] hover:bg-[#EAE3D5]'
+                      ? 'bg-amber-100 text-amber-800 border border-amber-300 shadow-sm' 
+                      : 'bg-[#F5F2EB] text-[#8C7364] hover:bg-[#EAE3D5] border border-transparent'
                   }`}
                 >
                   {cat}
@@ -449,8 +246,10 @@ export default function AvisosScreen({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className={`bg-white border-[1px] min-h-[220px] rounded-[18px] overflow-hidden transition-all shadow-[0_8px_30px_rgba(0,0,0,0.05)] ${
-                    notice.isCritical ? 'border-amber-200' : 'border-[#EAE3D5]'
+                  className={`bg-white border-[1px] border-l-[3px] min-h-[220px] rounded-[18px] overflow-hidden transition-all shadow-[0_8px_30px_rgba(0,0,0,0.05)] ${
+                    notice.isCritical
+                      ? 'border-amber-200 border-l-amber-500 bg-amber-50/40'
+                      : 'border-[#EAE3D5] border-l-amber-300'
                   }`}
                 >
                   {/* Banner Image if exists */}
@@ -556,9 +355,23 @@ export default function AvisosScreen({
           </AnimatePresence>
 
           {filteredNotices.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-2xl border border-[#EAE3D5] p-6 space-y-2">
-              <p className="text-sm font-bold text-[#3E342F]">Nenhum aviso encontrado</p>
-              <p className="text-xs text-[#8C7364]">Experimente selecionar outra categoria ou crie um novo comunicado.</p>
+            <div className="text-center py-16 bg-white rounded-2xl border border-[#EAE3D5] p-8 space-y-4">
+              <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto">
+                <Bell className="w-8 h-8 text-amber-600" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-extrabold text-base text-[#3E342F] font-display">
+                  Nenhum aviso por aqui
+                </h3>
+                <p className="text-xs text-[#8C7364] leading-relaxed max-w-xs mx-auto">
+                  Quando o síndico publicar comunicados, eles aparecerão nesta lista.
+                </p>
+              </div>
+              {isAdmin && (
+                <p className="text-[10px] font-semibold text-[#A6978A] tracking-wide uppercase">
+                  Você pode criar o primeiro comunicado usando o botão acima.
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -726,60 +539,8 @@ export default function AvisosScreen({
         </div>
       )}
 
-      {/* Footer Mobile Navigation - Specific layout/classes to satisfy specs: */}
-      {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'Início')]/.. */}
-      {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'IndicaApt')]/.. */}
-      {/* //nav[contains(@class, 'md:hidden')]//span[contains(text(), 'Perfil')]/.. */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
-        
-        <button 
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Início</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('avisos', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Avisos</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('ocorrencias', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Megaphone className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ocorrências</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('indica_apt', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span className="text-[10px] font-bold">IndicaApt</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('perfil', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Perfil</span>
-        </button>
-
-        <button 
-          onClick={() => onNavigate('login', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-red-600 hover:text-red-700 cursor-pointer w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Sair</span>
-        </button>
-      </nav>
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav activeScreen="avisos" isAdmin={isAdmin} onNavigate={onNavigate} />
 
     </div>
   );

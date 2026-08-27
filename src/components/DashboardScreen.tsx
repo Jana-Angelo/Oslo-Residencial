@@ -1,33 +1,27 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Building2, 
   Bell, 
   MessageSquare, 
   Sparkles, 
-  ShieldCheck, 
-  Calendar, 
-  Wrench, 
   ChevronRight, 
-  ChevronDown,
   User, 
-  Menu, 
   X, 
-  Settings,
-  Home,
-  FileText,
-  ThumbsUp,
-  CreditCard,
-  LogOut,
   Pencil,
   Phone,
   Upload,
-  Megaphone,
+  Wrench,
+  Calendar,
+  ShieldCheck,
+  ThumbsUp,
+  CreditCard,
+  FileText,
 } from 'lucide-react';
 import { Notice } from '../types';
 import { syndicProfileService } from '../lib/database';
 import { storageService } from '../lib/storage';
 import { supabase } from '../lib/supabaseClient';
+import { Sidebar, MobileBottomNav, MobileHeader } from './shared';
 
 interface DashboardScreenProps {
   userProfile: {
@@ -46,8 +40,6 @@ interface DashboardScreenProps {
 }
 
 export default function DashboardScreen({ userProfile, onNavigate, notices, syndicData, syndicWhatsapp, onUpdateSyndic, onUpdateWhatsapp }: DashboardScreenProps) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
 
   const [syndic, setSyndic] = useState(syndicData);
@@ -188,194 +180,19 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
       
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setIsDrawerOpen(true)}
-            className="p-2 -ml-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg transition-colors cursor-pointer"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-[#8C7364]" />
-            <span className="font-bold text-lg text-[#3E342F] tracking-tight font-display">
-              Oslo Residencial
-            </span>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => onNavigate('avisos', 'push')}
-            className="p-2 text-[#8C7364] hover:bg-[#F5F2EB] rounded-full transition-colors relative cursor-pointer"
-          >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#FBF9F6]"></span>
-          </button>
-
-          <div className="relative">
-            <button
-              onClick={() => setIsProfileOpen(v => !v)}
-              className="flex items-center gap-2 py-1 pl-1 pr-1 md:pr-2 hover:bg-[#F5F2EB] rounded-full transition-colors cursor-pointer"
-              aria-label="Abrir menu do perfil"
-              aria-expanded={isProfileOpen}
-            >
-              <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#8C7364] shadow-sm bg-[#F5F2EB] flex items-center justify-center shrink-0">
-                {userProfile.avatar ? (
-                  <img 
-                    src={userProfile.avatar} 
-                    alt={userProfile.fullName} 
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <User className="w-5 h-5 text-[#8C7364]" />
-                )}
-              </div>
-              <div className="hidden md:block text-left min-w-0">
-                <p className="text-[11px] font-extrabold text-[#3E342F] leading-tight truncate">Olá, {firstName}</p>
-                <p className="text-[10px] text-[#8C7364] font-semibold leading-tight truncate mt-0.5">{userProfile.apartmentNumber}</p>
-              </div>
-              <ChevronDown className={`hidden md:block w-3.5 h-3.5 text-[#A6978A] transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            <AnimatePresence>
-              {isProfileOpen && (
-                <>
-                  <div className="fixed inset-0 z-30" onClick={() => setIsProfileOpen(false)} />
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                    className="absolute right-0 mt-2 w-64 bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl shadow-2xl overflow-hidden z-40"
-                  >
-                    <div className="px-4 py-4 flex items-center gap-3 border-b border-[#EAE3D5]">
-                      <div className="w-11 h-11 rounded-full overflow-hidden border border-[#8C7364] bg-[#F5F2EB] shrink-0">
-                        {userProfile.avatar ? (
-                          <img src={userProfile.avatar} alt={userProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                        ) : (
-                          <User className="w-5 h-5 text-[#8C7364] mx-auto mt-2.5" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-extrabold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-                        <p className="text-[10px] text-[#8C7364] font-semibold truncate">{userProfile.apartmentNumber}</p>
-                      </div>
-                    </div>
-                    <div className="p-1.5 flex flex-col gap-0.5">
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('dashboard', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Minhas indicações</button>
-                      <div className="h-[1px] bg-[#EAE3D5] my-1" />
-                      <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </header>
-
-      {/* Desktop Sidebar (Permanent) */}
-      <aside className="fixed inset-y-0 left-0 z-30 w-64 bg-[#F5F2EB] border-r border-[#EAE3D5] hidden md:flex flex-col p-6">
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 bg-[#8C7364] text-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-[#3E342F] tracking-tight font-display">Oslo Portal</span>
-        </div>
-
-        {/* User Card */}
-        <div className="bg-[#FBF9F6] border border-[#EAE3D5] rounded-xl p-4 mb-6 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-[#8C7364] flex items-center justify-center bg-[#F5F2EB]">
-            {userProfile.avatar ? (
-              <img 
-                src={userProfile.avatar} 
-                alt={userProfile.fullName} 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <User className="w-5 h-5 text-[#8C7364]" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <p className="font-bold text-xs text-[#3E342F] truncate">{userProfile.fullName}</p>
-            <p className="text-[10px] text-[#8C7364] font-semibold">{userProfile.apartmentNumber}</p>
-          </div>
-        </div>
-
-        {/* Nav list */}
-        <nav className="flex-1 space-y-1.5">
-          <button 
-            onClick={() => onNavigate('dashboard', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-[#8C7364] text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all"
-          >
-            <Home className="w-4 h-4" />
-            <span>Início</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('avisos', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <FileText className="w-4 h-4 text-[#8C7364]" />
-            <span>Avisos</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('ocorrencias', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <Megaphone className="w-4 h-4 text-[#8C7364]" />
-            <span>Ocorrências</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('indica_apt', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-            <span>IndicaApt</span>
-          </button>
-
-          <button 
-            onClick={() => onNavigate('perfil', 'none')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left"
-          >
-            <User className="w-4 h-4 text-[#8C7364]" />
-            <span>Perfil</span>
-          </button>
-
-          {/* Quick Admin access / Caixa */}
-          {isAdmin && (
-            <button 
-              onClick={() => onNavigate('caixa', 'push')}
-              className="w-full flex items-center gap-3 px-4 py-3 text-[#3E342F] hover:bg-[#EAE3D5] rounded-xl font-bold text-xs tracking-wider uppercase transition-all text-left border border-dashed border-[#CBBFB7] mt-8"
-            >
-              <CreditCard className="w-4 h-4 text-[#8C7364]" />
-              <span>Caixa do Prédio</span>
-            </button>
-          )}
-        </nav>
-
-        <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
-          <button 
-            onClick={() => onNavigate('login', 'none')}
-            className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sair do Portal</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activeScreen="dashboard" isAdmin={isAdmin} onNavigate={onNavigate} />
+      <MobileHeader
+        title="Oslo Residencial"
+        userProfile={userProfile}
+        onNavigate={onNavigate}
+        showBack={false}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-6xl mx-auto w-full space-y-4 md:space-y-6">
         
         {/* Welcome Section */}
-        <div>
+        <div className="bg-gradient-to-br from-amber-50/60 to-transparent rounded-2xl p-5 -m-5">
           <h2 className="text-2xl md:text-3xl font-extrabold text-[#3E342F] tracking-tight font-display">
             Bem-vindo, Residente.
           </h2>
@@ -447,7 +264,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
             {/* Avisos Hoje Card */}
             <div 
               onClick={() => onNavigate('avisos', 'push')}
-              className="bg-[#F5EFE6] border border-[#E5DFD5] hover:border-[#8C7364] rounded-2xl p-5 shadow-sm flex items-center justify-between cursor-pointer group transition-all"
+              className="bg-[#F5EFE6] border border-[#E5DFD5] border-l-4 border-l-amber-400 hover:border-[#8C7364] rounded-2xl p-5 shadow-sm flex items-center justify-between cursor-pointer group transition-all"
             >
               <div className="space-y-1.5">
                 <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block">
@@ -470,7 +287,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
             </div>
 
             {/* IndicaApt Card */}
-            <div className="bg-white border border-[#EAE3D5] rounded-2xl p-5 shadow-sm space-y-3">
+            <div className="bg-white border border-[#EAE3D5] border-l-4 border-l-violet-400 rounded-2xl p-5 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ThumbsUp className="w-5 h-5 text-[#8C7364]" />
@@ -509,7 +326,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
           {isAdmin && (
             <button 
               onClick={() => onNavigate('caixa', 'push')}
-              className="flex items-center justify-center gap-3 p-4 bg-[#F5F2EB] hover:bg-[#EAE3D5] border border-[#EAE3D5] rounded-xl text-xs font-bold text-[#3E342F] uppercase tracking-wider cursor-pointer transition-colors"
+              className="flex items-center justify-center gap-3 p-4 bg-[#F5F2EB] hover:bg-[#EAE3D5] border border-[#EAE3D5] border-l-4 border-l-emerald-400 rounded-xl text-xs font-bold text-[#3E342F] uppercase tracking-wider cursor-pointer transition-colors"
             >
               <CreditCard className="w-4.5 h-4.5 text-[#8C7364]" />
               <span>Caixa do Prédio</span>
@@ -566,8 +383,16 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
                 </div>
               ))
             ) : (
-              <div className="text-center py-6 text-xs text-[#A6978A]">
-                Nenhum comunicado recente.
+              <div className="text-center py-8 space-y-3">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#EAE3D5]/60">
+                  <FileText className="w-5 h-5 text-[#A6978A]" />
+                </div>
+                <p className="text-xs text-[#8C7364] font-semibold">
+                  Nenhum comunicado recente.
+                </p>
+                <p className="text-[11px] text-[#A6978A]">
+                  Os comunicados do síndico aparecerão aqui.
+                </p>
               </div>
             )}
           </div>
@@ -575,168 +400,10 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
 
       </main>
 
-      {/* Side Drawer (id='side-drawer') to satisfy spec */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div 
-            onClick={() => setIsDrawerOpen(false)}
-            className="absolute inset-0 bg-[#3E342F]/40 backdrop-blur-xs transition-opacity"
-          />
-          <div className="absolute inset-y-0 left-0 max-w-full flex">
-            <div 
-              id="side-drawer"
-              className="w-80 bg-[#FBF9F6] border-r border-[#EAE3D5] shadow-2xl flex flex-col"
-            >
-              <div className="px-5 py-6 border-b border-[#EAE3D5] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#8C7364]" />
-                  <span className="font-bold text-base text-[#3E342F] font-display">Oslo Drawer</span>
-                </div>
-                <button 
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="p-1 text-[#8C7364] hover:bg-[#F5F2EB] rounded-lg cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* User overview inside drawer */}
-              <div className="p-5 border-b border-[#EAE3D5] flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-[#8C7364] flex items-center justify-center bg-[#F5F2EB]">
-                  {userProfile.avatar ? (
-                    <img 
-                      src={userProfile.avatar} 
-                      alt={userProfile.fullName} 
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <User className="w-6 h-6 text-[#8C7364]" />
-                  )}
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-[#3E342F]">{userProfile.fullName}</h4>
-                  <p className="text-xs text-[#8C7364] font-medium">{userProfile.role}</p>
-                </div>
-              </div>
-
-              {/* Drawer Links */}
-              <div className="flex-1 px-3 py-4 space-y-1">
-                <button 
-                  onClick={() => { onNavigate('dashboard', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#8C7364] bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                >
-                  <Home className="w-4 h-4" />
-                  <span>Início</span>
-                </button>
-
-                <button 
-                  onClick={() => { onNavigate('avisos', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                >
-                  <FileText className="w-4 h-4 text-[#8C7364]" />
-                  <span>Avisos</span>
-                </button>
-
-                <button 
-                  onClick={() => { onNavigate('ocorrencias', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                >
-                  <Megaphone className="w-4 h-4 text-[#8C7364]" />
-                  <span>Ocorrências</span>
-                </button>
-
-                <button 
-                  onClick={() => { onNavigate('indica_apt', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                >
-                  <ThumbsUp className="w-4 h-4 text-[#8C7364]" />
-                  <span>IndicaApt</span>
-                </button>
-
-                {isAdmin && (
-                  <button 
-                    onClick={() => { onNavigate('caixa', 'push'); setIsDrawerOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                  >
-                    <CreditCard className="w-4 h-4 text-[#8C7364]" />
-                    <span>Caixa do Prédio</span>
-                  </button>
-                )}
-
-                {/* Specific selector element: //div[@id='side-drawer']//span[contains(text(), 'Configurações')]/.. */}
-                <button 
-                  onClick={() => { onNavigate('perfil', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl uppercase tracking-wider"
-                >
-                  <Settings className="w-4 h-4 text-[#8C7364]" />
-                  <span>Configurações</span>
-                </button>
-              </div>
-
-              <div className="p-4 border-t border-[#EAE3D5]">
-                <button 
-                  onClick={() => { onNavigate('login', 'none'); setIsDrawerOpen(false); }}
-                  className="w-full py-2.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-bold uppercase tracking-wider"
-                >
-                  Sair do Portal
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Side Drawer (id='side-drawer') - removed, using shared Sidebar */}
 
       {/* Bottom Nav Footer for Mobile screens (Dashboard/Resident contexts) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-6 items-center md:hidden shadow-lg safe-bottom">
-        <button 
-          onClick={() => onNavigate('dashboard', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#8C7364] w-full cursor-pointer"
-        >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Início</span>
-        </button>
- 
-        <button 
-          onClick={() => onNavigate('avisos', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Bell className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Avisos</span>
-        </button>
- 
-        <button 
-          onClick={() => onNavigate('ocorrencias', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <Megaphone className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ocorrências</span>
-        </button>
- 
-        <button 
-          onClick={() => onNavigate('indica_apt', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span className="text-[10px] font-bold">IndicaApt</span>
-        </button>
- 
-        <button 
-          onClick={() => onNavigate('perfil', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-[#6E6157] hover:text-[#8C7364] w-full cursor-pointer"
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Perfil</span>
-        </button>
- 
-        <button 
-          onClick={() => onNavigate('login', 'none')}
-          className="flex flex-col items-center gap-0.5 py-1 text-red-600 hover:text-red-700 cursor-pointer w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Sair</span>
-        </button>
-      </nav>
+      <MobileBottomNav activeScreen="dashboard" isAdmin={isAdmin} onNavigate={onNavigate} />
 
       {/* Modal: Editar Perfil do Síndico */}
       {isSyndicEditOpen && (
