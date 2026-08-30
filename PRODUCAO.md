@@ -123,6 +123,27 @@ O Supabase pode exigir que o usuário confirme o e-mail antes do primeiro login.
 
 ---
 
+## 5. PWA — instalação como app (recomendado)
+
+O portal já gera PWA (Service Worker + manifest) no build. Para o cliente instalar
+como app no celular, garanta:
+
+1. **Ícone do app**: hoje os PNGs em `public/icons/` são uma marca provisória gerada por
+   `scripts/generate-icons.mjs`. Para usar o artefato oficial, substitua os arquivos
+   `public/icons/icon-192.png`, `icon-512.png`, `icon-512-maskable.png` (512, fundo cheio
+   para `maskable`) e `apple-touch-icon.png` (180, fundo cheio) e rode `npm run build`.
+2. **Deploy no Netlify**: o `netlify.toml` já protege `/sw.js` e `/manifest.webmanifest`
+   do redirect SPA e define o cache correto do `sw.js` (não alterar).
+3. **Teste rápido** (após o deploy com HTTPS):
+   - Chrome/Android: abra o site → menu "Instalar app" no perfil (ou ⋮ do navegador).
+   - iPhone/iPad: menu do perfil → "Adicionar à tela de início" (Safari).
+   - Lighthouse (abas de auditoria do DevTools) → seção PWA.
+4. **Atualizações**: o Service Worker usa `autoUpdate` — ao abrir o app instalado, novas
+   versões são baixadas e aplicadas automaticamente. Como as fontes do Google entram no
+   cache em runtime, o app mantém o visual mesmo offline após a primeira visita.
+
+---
+
 ## Checklist final antes de entregar ao cliente
 
 - [ ] Tabela `ocorrencias` criada (item 1)
@@ -131,5 +152,7 @@ O Supabase pode exigir que o usuário confirme o e-mail antes do primeiro login.
 - [ ] Login e cadastro funcionando no domínio de produção
 - [ ] RLS ativo nas tabelas e buckets (item 3, recomendado)
 - [ ] Decisão tomada sobre confirmação de e-mail (item 4)
+- [ ] Ícone oficial do app em `public/icons/` substituído (item 5)
+- [ ] Teste de instalação PWA no Android (Chrome) e iOS (Safari) (item 5)
 - [ ] Dados reais alimentados (o banco está vazio — sem ocorrências, avisos, fluxo, etc., o app
       aparecerá vazio de propósito após a limpeza dos dados demo)
