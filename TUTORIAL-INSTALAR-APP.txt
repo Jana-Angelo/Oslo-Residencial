@@ -1,0 +1,136 @@
+╔══════════════════════════════════════════════════════════════╗
+║           OSLO RESIDENCIAL — COMO INSTALAR O APP              ║
+╚══════════════════════════════════════════════════════════════╝
+
+O portal do condomínio pode ser instalado no seu celular e funciona
+como um "app de verdade": fica iconezinho na tela inicial, abre em
+tela cheia, sem a barra do navegador, e carrega mais rápido.
+
+Funciona em qualquer Android ou iPhone/iPad. Leva menos de 1 minuto.
+
+
+────────────────────────────────────────────────────────────────
+1) PRIMEIRO PASSO (vale para todos)
+────────────────────────────────────────────────────────────────
+Abra o endereço do portal no navegador do celular:
+        (coloque aqui a URL do portal — ex.: https://oslo-residencial.vercel.app)
+
+IMPORTANTE: acesse pelo navegador (Chrome no Android, Safari no
+iphone/ipad). NÃO use o navegador embutido de apps como WhatsApp
+ou Instagram — eles bloqueiam a instalação. Se abriu por lá, toque
+em "Abrir no navegador" (ou copie o endereço e cole no Chrome/Safari).
+
+
+────────────────────────────────────────────────────────────────
+2) ANDROID (Chrome)
+────────────────────────────────────────────────────────────────
+O jeito mais rápido: PELO PORTAL
+   1. Entre no portal e faça login.
+   2. Toque no seu avatar (canto superior direito).
+   3. No menu, toque em "Instalar app".
+   4. Confirme no aviso do Chrome com "Instalar".
+   5. Pronto! O ícone do Oslo aparece na tela inicial.
+
+Ou PELO NAVEGADOR
+   1. Com o portal aberto, toque em "⋮" (menú, três pontinhos).
+   2. Toque em "Instalar app" (ou "Adicionar à tela inicial").
+   3. Confirme com "Instalar".
+
+DICA: se o "Instalar app" não aparecer de primeira, use o site por
+20-30 segundos (role, entre em uma tela) e tente de novo. O Chrome
+só libera o botão depois de um pouco de uso.
+
+
+────────────────────────────────────────────────────────────────
+3) IPHONE / IPAD (Safari)
+────────────────────────────────────────────────────────────────
+O jeito mais rápido: PELO PORTAL
+   1. Entre no portal e faça login.
+   2. Toque no seu avatar (canto superior direito).
+   3. Toque em "Adicionar à tela de início".
+   4. No compartilhamento que abrir, toque em "Adicionar à Tela de
+      Início" (e em "Adicionar", se pedir).
+   5. Pronto! O ícone do Oslo aparece na tela inicial.
+
+Ou PELO SAFARI
+   1. Com o portal aberto, toque no botão "Compartilhar"  (□↑).
+   2. Role a lista e toque em "Adicionar à Tela de Início".
+   3. Toque em "Adicionar" (o nome fica "Oslo" automaticamente).
+
+NOTA: no iPhone a instalação é sempre por aqui — não existe esse
+"Instalar app" do Android. É o mecanismo normal da Apple.
+
+
+────────────────────────────────────────────────────────────────
+4) COMO SABER QUE DEU CERTO
+────────────────────────────────────────────────────────────────
+   • Aparece um ícone novo na tela inicial com o logo do Oslo
+     (fundo branco, cantos arredondados).
+   • Ao tocar nele, o portal abre em tela cheia, SEM a barra de
+     endereço do navegador, com o nome "Oslo" embaixo do ícone.
+
+Dica para achar: no finalzinho da página "Meu Perfil" aparece um
+texto pequeno "build XXXXXXX" — ele identifica a versão instalada.
+Se algum dia disserem que "não atualizou", é por ele que a gente
+confere.
+
+
+────────────────────────────────────────────────────────────────
+5) ATUALIZAÇÕES
+────────────────────────────────────────────────────────────────
+O app se atualiza SOZINHO. Toda vez que o condomínio publicar uma
+atualização, basta abrir o app normalmente (com internet) que ele
+recebe a versão nova em segundo plano. Você não precisa reinstalar
+nada.
+
+SE NÃO ATUALIZAR: feche todas as abas do navegador com o portal,
+abra o app de novo e espere. Se ainda assim continuar antigo,
+veja o item 7.
+
+
+────────────────────────────────────────────────────────────────
+6) PRECISA DE INTERNET?
+────────────────────────────────────────────────────────────────
+O app funciona sem internet SOMENTE para abrir e mostrar as telas
+já visitadas. Tudo que envolve conteúdo novo (avisos, ocorrências,
+caixa, login) precisa de internet — como qualquer app.
+
+
+────────────────────────────────────────────────────────────────
+7) PROBLEMAS FREQUENTES
+────────────────────────────────────────────────────────────────
+
+"Não apareceu a opção de instalar"
+   • Android: use o site um pouco e tente de novo (o Chrome exige
+     um pouco de uso antes de liberar). Se já tocou em "Cancelar"
+     em algum aviso antes, o Chrome esconde o botão por um tempo.
+   • iPhone: no Safari use "Compartilhar → Adicionar à Tela de
+     Início" — é ali que sempre funciona.
+   • Abra pelo navegador normal (Chrome/Safari), não pelo de
+     dentro de WhatsApp/Instagram/Facebook.
+
+"Aberto de outro celular, mas sumiu o app"
+   • A instalação é POR aparelho. Cada celular precisa instalá-lo
+     com o próprio navegador.
+
+"Abri pelo ícone mas mostra a barra do navegador"
+   • É sinal de que abriu a tela inicial errada (atalho externo).
+     Toque no ícone do Oslo (fundo branco) — ele abre em tela cheia.
+
+"Aparece um aplicativo duplicado"
+   • Pode ter sido instalado 2 vezes. Apague um dos atalhos como
+     qualquer app comum e mantenha um só.
+
+"Quero remover o app"
+   • Android: segure o ícone → "Desinstalar" ou "Remover".
+   • iPhone: segure o ícone → "Remover App" → "Remover da Tela de
+     Início" (mantém) ou "Apagar App" (remove tudo).
+
+
+────────────────────────────────────────────────────────────────
+8) RESUMO RÁPIDO
+────────────────────────────────────────────────────────────────
+  ANDROID:  avatar  →  "Instalar app"  →  Instalar  ✔
+  IPHONE:   avatar  →  "Adicionar à tela de início"  →  Adicionar ✔
+
+Use o ícone de fundo BRANCO com o logo — é o app do condomínio.
