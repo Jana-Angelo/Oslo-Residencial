@@ -21,7 +21,7 @@
   --color-accent-avisos: #D97706;
   --color-accent-caixa: #059669;
   --color-accent-ocorrencias: #EA580C;
-  --color-accent-indicaapt: #7C3AED;
+  --color-accent-indicaapt: #A480CF;
   --color-accent-perfil: #475569;
 }
 
@@ -56,9 +56,13 @@
   border-radius: 10px;
 }
 
-/* Micro-interaction: subtle press feedback (no animation overload) */
+/* Micro-interaction: press feedback responds on pointer-down (scale),
+   with a quick spring-back on release. transform is compositor-friendly. */
+:where(button, [role="button"], a):not(:disabled) {
+  transition: transform 150ms ease-out;
+}
 :where(button, [role="button"], a):active:not(:disabled) {
-  transform: translateY(1px);
+  transform: scale(0.97);
 }
 
 /* Respect reduced-motion preferences */

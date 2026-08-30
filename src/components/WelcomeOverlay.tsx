@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Megaphone,
-  CreditCard,
   ThumbsUp,
   ArrowRight,
   X,
   Building2,
+  User,
 } from 'lucide-react';
 
 const STORAGE_KEY = 'oslo_welcome_seen';
@@ -38,18 +38,18 @@ const STEPS = [
     iconColor: 'text-amber-700',
   },
   {
-    icon: CreditCard,
-    title: 'Caixa do Prédio',
-    description: 'Acompanhe as finanças do condomínio com transparência. Pagamentos, despesas e fluxo mensal.',
-    color: 'bg-emerald-100',
-    iconColor: 'text-emerald-700',
-  },
-  {
     icon: ThumbsUp,
     title: 'IndicaApt',
-    description: 'Descubra prestadores recomendados por seus vizinhos. Compartilhe boas descobertas com a comunidade.',
-    color: 'bg-violet-100',
-    iconColor: 'text-violet-700',
+    description: 'Descubra as recomendação por seus vizinhos. Compartilhe boas descobertas com o prédio.',
+    color: 'bg-[#F4F0F9]',
+    iconColor: 'text-[#8F6BC2]',
+  },
+  {
+    icon: User,
+    title: 'Perfil',
+    description: 'Complete seu perfil com foto e suas informações para que seus vizinhos possam te reconhecer.',
+    color: 'bg-slate-100',
+    iconColor: 'text-slate-700',
   },
 ];
 
