@@ -1,11 +1,23 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import {execSync} from 'child_process';
 import {defineConfig} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
 
+function buildStamp() {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'dev';
+  }
+}
+
 export default defineConfig(() => {
   return {
+    define: {
+      __APP_BUILD__: JSON.stringify(buildStamp()),
+    },
     plugins: [
       react(),
       tailwindcss(),

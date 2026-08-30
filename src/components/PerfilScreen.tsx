@@ -509,6 +509,10 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
           </div>
         </div>
 
+        <p className="text-center text-[9px] font-semibold text-[#B9AEA2] uppercase tracking-widest select-none">
+          build {__APP_BUILD__}
+        </p>
+
       </main>
 
       <MobileBottomNav activeScreen="perfil" isAdmin={isAdmin} onNavigate={onNavigate} />
