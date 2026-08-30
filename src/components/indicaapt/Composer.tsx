@@ -80,6 +80,7 @@ export default function Composer({
               </p>
             </div>
             <button
+              data-onboarding="indica_apt:nova"
               onClick={onFocus}
               className="flex items-center gap-1.5 px-4 py-2 bg-transparent border border-[#7A5B47] text-[#7A5B47] rounded-[10px] text-[10px] font-bold hover:bg-[#7A5B47]/5 transition-colors cursor-pointer"
             >

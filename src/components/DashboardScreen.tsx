@@ -205,13 +205,14 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
           {/* Perfil do Síndico Card */}
-          <div className="bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl p-5 shadow-sm space-y-4">
+          <div data-onboarding="dashboard:sindico_card" className="bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase">
                 Perfil do Síndico
               </h3>
               {isAdmin && (
                 <button 
+                  data-onboarding="dashboard:editar_sindico"
                   onClick={() => {
                     setEditName(syndic.name);
                     setEditPeriod(syndic.period);
@@ -247,6 +248,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
             </div>
 
             <button 
+              data-onboarding="dashboard:falar_sindico"
               onClick={() => {
                 setEditWhatsapp(whatsapp);
                 setIsWhatsappConfigOpen(true);
@@ -263,8 +265,9 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
             
             {/* Avisos Hoje Card */}
             <div 
+              data-onboarding="dashboard:avisos_hoje"
               onClick={() => onNavigate('avisos', 'push')}
-              className="bg-[#F5EFE6] border border-[#E5DFD5] border-l-4 border-l-amber-400 hover:border-[#8C7364] rounded-2xl p-5 shadow-sm flex items-center justify-between cursor-pointer group transition-all"
+              className="bg-[#F5EFE6] border border-[#E5DFD5] hover:border-[#8C7364] rounded-2xl p-5 shadow-sm flex items-center justify-between cursor-pointer group transition-all"
             >
               <div className="space-y-1.5">
                 <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block">
@@ -272,7 +275,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
                 </span>
                 {/* Embedded span inside selector to support: //span[contains(text(), 'Avisos')]/.. */}
                 <div className="flex items-center gap-1.5 text-xs text-[#8C7364] font-semibold">
-                  <Bell className="w-3.5 h-3.5" />
+                  <Bell className="w-3.5 h-3.5 text-amber-600" />
                   <span className="group-hover:underline">Avisos</span>
                 </div>
                 <p className="text-xs text-[#8C7364] font-medium">
@@ -287,10 +290,10 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
             </div>
 
             {/* IndicaApt Card */}
-            <div className="bg-white border border-[#EAE3D5] border-l-4 border-l-violet-400 rounded-2xl p-5 shadow-sm space-y-3">
+            <div data-onboarding="dashboard:indicaapt_card" className="bg-white border border-[#EAE3D5] rounded-2xl p-5 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ThumbsUp className="w-5 h-5 text-[#8C7364]" />
+                  <ThumbsUp className="w-5 h-5 text-[#A480CF]" />
                   {/* Matches selector: //div[contains(text(), 'IndicaApt')]/.. */}
                   <div className="font-extrabold text-sm text-[#3E342F] font-display">
                     IndicaApt
@@ -309,7 +312,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
                     e.preventDefault();
                     onNavigate('indica_apt', 'push');
                   }}
-                  className="text-xs font-bold text-[#8C7364] hover:text-[#3E342F] flex items-center gap-1 group/link"
+                  className="text-xs font-bold text-[#A480CF] hover:text-[#8F6BC2] flex items-center gap-1 group/link"
                 >
                   Explorar serviços
                   <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
@@ -325,10 +328,11 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
         <div className={`grid ${isAdmin ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
           {isAdmin && (
             <button 
+              data-onboarding="dashboard:caixa_atalho"
               onClick={() => onNavigate('caixa', 'push')}
-              className="flex items-center justify-center gap-3 p-4 bg-[#F5F2EB] hover:bg-[#EAE3D5] border border-[#EAE3D5] border-l-4 border-l-emerald-400 rounded-xl text-xs font-bold text-[#3E342F] uppercase tracking-wider cursor-pointer transition-colors"
+              className="flex items-center justify-center gap-3 p-4 bg-[#F5F2EB] hover:bg-[#EAE3D5] border border-[#EAE3D5] rounded-xl text-xs font-bold text-[#3E342F] uppercase tracking-wider cursor-pointer transition-colors"
             >
-              <CreditCard className="w-4.5 h-4.5 text-[#8C7364]" />
+              <CreditCard className="w-4.5 h-4.5 text-emerald-600" />
               <span>Caixa do Prédio</span>
             </button>
           )}
@@ -343,7 +347,7 @@ export default function DashboardScreen({ userProfile, onNavigate, notices, synd
         </div>
 
         {/* Avisos Recentes Section */}
-        <div className="bg-[#F5F2EB]/50 border border-[#EAE3D5] rounded-2xl p-5 space-y-4">
+        <div data-onboarding="dashboard:avisos_recentes" className="bg-[#F5F2EB]/50 border border-[#EAE3D5] rounded-2xl p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-[#3E342F] font-display">
               Avisos Recentes

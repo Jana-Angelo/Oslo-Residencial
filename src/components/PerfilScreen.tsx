@@ -313,7 +313,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
         )}
 
         {/* 1. User Identity Card */}
-        <div className="bg-white border border-[#EAE3D5] border-t-4 border-t-slate-400 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-5">
+        <div data-onboarding="perfil:avatar" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-5">
           <input 
             type="file"
             ref={fileInputRef}
@@ -377,8 +377,8 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
         </div>
 
         {/* 2. Access Privileges Card */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2">
+        <div data-onboarding="perfil:privilegios" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-[#CBBFB7] pl-2">
             Privilégios de Acesso
           </h4>
           
@@ -406,8 +406,8 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
         </div>
 
         {/* 3. Account Settings Form Card */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2 border-b border-[#F5F2EB] pb-2">
+        <div data-onboarding="perfil:nome_email" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-[#CBBFB7] pl-2 border-b border-[#F5F2EB] pb-2">
             Configurações da Conta
           </h4>
 
@@ -440,7 +440,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div data-onboarding="perfil:apartamento" className="space-y-1">
               <label className="text-[10px] font-bold text-[#8C7364] uppercase tracking-wider">Número do Apartamento</label>
               <select
                 value={apartmentNumber}
@@ -458,6 +458,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
               <span className="text-[#8C7364]">Esqueceu a senha ou quer redefinir?</span>
               <button 
                 type="button"
+                data-onboarding="perfil:redefinir_senha"
                 onClick={handleResetPasswordClick}
                 className="text-[#8C7364] hover:underline uppercase tracking-wide cursor-pointer text-[11px]"
               >
@@ -466,6 +467,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
             </div>
 
             <button
+              data-onboarding="perfil:salvar"
               type="submit"
               className="w-full py-3.5 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider mt-3 cursor-pointer shadow-sm transition-all flex items-center justify-center gap-2"
             >
@@ -477,7 +479,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
 
         {/* 4. Permissões de Usuário */}
         <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
-          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-slate-400 pl-2 border-b border-[#F5F2EB] pb-2">
+          <h4 className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block border-l-2 border-[#CBBFB7] pl-2 border-b border-[#F5F2EB] pb-2">
             Permissões de Usuário
           </h4>
 
@@ -490,6 +492,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
               </div>
               <button
                 type="button"
+                data-onboarding="perfil:toggle_admin"
                 onClick={handleToggleAdmin}
                 className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
                   isAdmin ? 'bg-[#8C7364]' : 'bg-[#E5DFD5]'
@@ -611,7 +614,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
                     </button>
                     <button
                       type="submit"
-                      className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md hover:shadow-lg"
+                      className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md"
                     >
                       Salvar
                     </button>
@@ -690,7 +693,7 @@ export default function PerfilScreen({ userProfile, onUpdateProfile, onNavigate 
                     </button>
                     <button
                       type="submit"
-                      className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md hover:shadow-lg"
+                      className="py-3 bg-[#8C7364] hover:bg-[#7A6355] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer text-center shadow-md"
                     >
                       Confirmar
                     </button>
