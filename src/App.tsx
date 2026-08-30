@@ -29,7 +29,7 @@ import AvisosScreen from './components/AvisosScreen';
 import OcorrenciasScreen from './components/OcorrenciasScreen';
 import IndicaAptScreen from './components/IndicaAptScreen';
 import PerfilScreen from './components/PerfilScreen';
-import WelcomeOverlay, { hasSeenWelcome } from './components/WelcomeOverlay';
+import WelcomeOverlay, { hasSeenWelcome, markWelcomeSeen } from './components/WelcomeOverlay';
 import OnboardingProvider from './onboarding/OnboardingProvider';
 import { completeOnboarding, isOnboardingDone, resetOnboarding } from './lib/onboarding';
 
@@ -474,14 +474,17 @@ export default function App() {
     setCurrentScreen('dashboard');
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const isOnboardingTestUser = session?.user?.email?.toLowerCase().trim() === 'jjana.angelo@gmail.com';
-      if (isOnboardingTestUser || !hasSeenWelcome()) {
+      const onboardingTestEmail = session?.user?.email?.toLowerCase().trim() ?? '';
+      const isOnboardingTestUser = onboardingTestEmail === 'jjana.angelo@gmail.com';
+      const onboardingDone = session?.user?.email ? isOnboardingDone(session.user.email) : false;
+      const previewOnboarding = !!(isOnboardingTestUser && session?.user?.email && !onboardingDone);
+      if (previewOnboarding || !hasSeenWelcome()) {
         setShowWelcome(true);
       }
       if (session?.user?.id) {
         await fetchProfile(session.user.id);
       }
-      if (isOnboardingTestUser && session?.user?.email && !isOnboardingDone(session.user.email)) {
+      if (isOnboardingTestUser && session?.user?.email && !onboardingDone) {
         resetOnboarding(session.user.email);
       }
     } catch (e) {
@@ -549,6 +552,7 @@ export default function App() {
 
   const handleFinalizeOnboarding = useCallback(() => {
     completeOnboarding(onboardingUserKey);
+    markWelcomeSeen();
   }, [onboardingUserKey]);
 
   // State modification handlers
