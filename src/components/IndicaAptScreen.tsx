@@ -387,7 +387,7 @@ export default function IndicaAptScreen({
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-16 xl:pl-60">
+    <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
 
       {/* Sidebar */}
       <Sidebar activeScreen="indica_apt" isAdmin={isAdmin} onNavigate={onNavigate} />
@@ -395,7 +395,7 @@ export default function IndicaAptScreen({
       {/* Mobile Header */}
       <MobileHeader
         title="IndicaApt"
-        subtitle="Indique e Ganhe"
+        subtitle="Indique ao Prédio."
         userProfile={userProfile}
         onNavigate={onNavigate}
       />

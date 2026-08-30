@@ -272,6 +272,7 @@ export default function FeedCard({
         <div className="flex items-center gap-2 flex-wrap">
           {/* Também recomendo */}
           <button
+            data-onboarding="indica_apt:curtir"
             onClick={() => onToggleLike(rec.id)}
             className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               liked
@@ -286,6 +287,7 @@ export default function FeedCard({
 
           {/* Comentar */}
           <button
+            data-onboarding="indica_apt:comentar"
             onClick={() => onToggleComments(rec.id)}
             className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               expanded
@@ -300,6 +302,7 @@ export default function FeedCard({
 
           {/* Salvar */}
           <button
+            data-onboarding="indica_apt:salvar"
             onClick={() => onToggleFavorite(rec.id)}
             className={`flex items-center gap-1.5 px-3 md:px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               isFav

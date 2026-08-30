@@ -151,6 +151,7 @@ export default function FeedSection({
         <div>
           <div className="relative">
             <input
+              data-onboarding="indica_apt:busca"
               type="text"
               placeholder="O que você está procurando? Ex.: eletricista, pizza, pet shop, restaurante..."
               aria-label="Buscar indicações"
@@ -165,7 +166,7 @@ export default function FeedSection({
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex gap-1.5 overflow-x-auto pb-1.5 md:pb-0 scrollbar-none">
+          <div data-onboarding="indica_apt:filtros" className="flex gap-1.5 overflow-x-auto pb-1.5 md:pb-0 scrollbar-none">
             {MAIN_FILTERS.map(f => {
               const isActive = activeFilter === f.value;
               return (

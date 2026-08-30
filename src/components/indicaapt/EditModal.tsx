@@ -1,8 +1,9 @@
 import { useRef } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, Heart, ThumbsUp, Image as ImageIcon } from 'lucide-react';
 import { Recommendation } from '../../types';
 import { SOCIAL_CATEGORY_OPTIONS } from './shared';
+import { overlayPanel, overlayScrim } from '../shared/motion';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -53,19 +54,28 @@ export default function EditModal({
 }: EditModalProps) {
   const editFileRef = useRef<HTMLInputElement>(null);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div onClick={onClose} className="absolute inset-0 bg-[#3E342F]/40 backdrop-blur-xs" />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Editar indicação"
-        className="relative bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl p-6 shadow-2xl w-full max-w-md space-y-4 max-h-[90vh] overflow-y-auto"
-      >
+    <AnimatePresence>
+      {isOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <motion.div
+          variants={overlayScrim}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          onClick={onClose}
+          className="absolute inset-0 bg-[#3E342F]/40 backdrop-blur-xs"
+        />
+        <motion.div
+          variants={overlayPanel}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Editar indicação"
+          className="relative bg-[#FBF9F6] border border-[#EAE3D5] rounded-2xl p-6 shadow-2xl w-full max-w-md space-y-4 max-h-[90vh] overflow-y-auto"
+        >
         <div className="flex items-center justify-between border-b border-[#EAE3D5] pb-3">
           <h3 className="font-extrabold text-base text-[#3E342F] font-display">Editar Indicação</h3>
           <button
@@ -219,7 +229,9 @@ export default function EditModal({
             </button>
           </div>
         </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -31,7 +31,7 @@ export default function MobileBottomNav({ activeScreen, isAdmin, onNavigate }: M
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/95 backdrop-blur-md border-t border-[#EAE3D5] py-1 grid grid-cols-5 items-center md:hidden shadow-lg safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FBF9F6]/80 backdrop-blur-xl backdrop-saturate-150 border-t border-[#F5F2EB] shadow-[0_-1px_0_rgba(62,52,47,0.04)] py-1 grid grid-cols-5 items-center md:hidden safe-bottom">
         {primaryItems.map(item => {
           const Icon = item.icon;
           const isActive = activeScreen === item.screen;
@@ -80,7 +80,7 @@ export default function MobileBottomNav({ activeScreen, isAdmin, onNavigate }: M
                   onClick={() => { setIsMoreOpen(false); onNavigate('indica_apt', 'none'); }}
                   className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-bold text-[#3E342F] hover:bg-[#F5F2EB] rounded-xl cursor-pointer"
                 >
-                  <ThumbsUp className="w-4 h-4 text-violet-600" />
+                  <ThumbsUp className="w-4 h-4 text-[#A480CF]" />
                   <span>IndicaApt</span>
                 </button>
 

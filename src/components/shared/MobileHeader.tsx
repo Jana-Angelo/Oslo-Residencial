@@ -26,7 +26,7 @@ export default function MobileHeader({ title, subtitle, userProfile, onNavigate,
   const firstName = (userProfile.fullName || '').split(' ')[0] || 'Morador';
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FBF9F6]/90 backdrop-blur-md border-b border-[#EAE3D5] px-4 py-4 flex items-center justify-between md:px-8">
+    <header className="sticky top-0 z-40 bg-[#FBF9F6]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-[#F5F2EB] shadow-[0_1px_0_rgba(62,52,47,0.04)] px-4 py-4 flex items-center justify-between md:px-8">
       <div className="flex items-center gap-3">
         {showBack && (
           <button

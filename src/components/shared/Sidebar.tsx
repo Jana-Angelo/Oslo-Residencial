@@ -23,7 +23,7 @@ const NAV_ITEMS: { screen: NavScreen; label: string; icon: React.FC<{ className?
   { screen: 'dashboard', label: 'Início', icon: Home, accent: 'bg-[#8C7364]' },
   { screen: 'avisos', label: 'Avisos', icon: FileText, accent: 'bg-amber-600' },
   { screen: 'ocorrencias', label: 'Ocorrências', icon: Megaphone, accent: 'bg-orange-600' },
-  { screen: 'indica_apt', label: 'IndicaApt', icon: ThumbsUp, accent: 'bg-violet-600' },
+  { screen: 'indica_apt', label: 'IndicaApt', icon: ThumbsUp, accent: 'bg-[#A480CF]' },
   { screen: 'perfil', label: 'Perfil', icon: User, accent: 'bg-slate-600' },
   { screen: 'caixa', label: 'Caixa do Prédio', icon: CreditCard, adminOnly: true, accent: 'bg-emerald-600' },
 ];

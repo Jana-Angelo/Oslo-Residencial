@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AnimatePresence, motion, type Variants } from 'motion/react';
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import { AnimatePresence, MotionConfig, motion, type Variants } from 'motion/react';
 import { Notice, Recommendation, PendingPayment, UserProfile, FinanceSummary, Ocorrencia, OcorrenciaComment } from './types';
 import { 
   INITIAL_NOTICES, 
@@ -30,6 +30,8 @@ import OcorrenciasScreen from './components/OcorrenciasScreen';
 import IndicaAptScreen from './components/IndicaAptScreen';
 import PerfilScreen from './components/PerfilScreen';
 import WelcomeOverlay, { hasSeenWelcome } from './components/WelcomeOverlay';
+import OnboardingProvider from './onboarding/OnboardingProvider';
+import { completeOnboarding, isOnboardingDone, resetOnboarding } from './lib/onboarding';
 
 const WEEKDAYS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -470,13 +472,17 @@ export default function App() {
   const handleLogin = async () => {
     setTransitionType('push');
     setCurrentScreen('dashboard');
-    if (!hasSeenWelcome()) {
-      setShowWelcome(true);
-    }
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      const isOnboardingTestUser = session?.user?.email?.toLowerCase().trim() === 'jjana.angelo@gmail.com';
+      if (isOnboardingTestUser || !hasSeenWelcome()) {
+        setShowWelcome(true);
+      }
       if (session?.user?.id) {
         await fetchProfile(session.user.id);
+      }
+      if (isOnboardingTestUser && session?.user?.email && !isOnboardingDone(session.user.email)) {
+        resetOnboarding(session.user.email);
       }
     } catch (e) {
       console.error('Error loading profile after login', e);
@@ -484,6 +490,14 @@ export default function App() {
   };
 
   const isAdminUser = userProfile.isAdmin !== false && (userProfile.role === 'Administrador' || userProfile.role === 'Síndico' || userProfile.isAdmin === true);
+  const isOnboardingTestUser = userProfile.email?.toLowerCase().trim() === 'jjana.angelo@gmail.com';
+  const onboardingUserKey = userProfile.email || userProfile.apartmentNumber || userProfile.fullName || 'morador';
+
+  const onboardingPreviewOrder = useMemo(() => {
+    const order = ['dashboard', 'avisos', 'ocorrencias', 'indica_apt', 'perfil'];
+    if (isAdminUser) order.splice(order.indexOf('perfil'), 0, 'caixa');
+    return order;
+  }, [isAdminUser]);
 
   // If not admin and on caixa, redirect to dashboard
   useEffect(() => {
@@ -517,6 +531,25 @@ export default function App() {
       console.error(e);
     }
   };
+
+  const handleNavigateRef = useRef<typeof handleNavigate>(handleNavigate);
+  handleNavigateRef.current = handleNavigate;
+
+  const handlePreviewNext = useCallback(() => {
+    if (!isOnboardingTestUser) return;
+    const i = onboardingPreviewOrder.indexOf(currentScreen);
+    const next = onboardingPreviewOrder[i + 1];
+    if (next) {
+      window.setTimeout(
+        () => handleNavigateRef.current(next as never, 'none'),
+        600
+      );
+    }
+  }, [isOnboardingTestUser, onboardingPreviewOrder, currentScreen]);
+
+  const handleFinalizeOnboarding = useCallback(() => {
+    completeOnboarding(onboardingUserKey);
+  }, [onboardingUserKey]);
 
   // State modification handlers
   const handleAddNotice = (newNotice: Notice) => {
@@ -1098,10 +1131,22 @@ export default function App() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="relative min-h-screen overflow-x-hidden bg-[#FBF9F6]">
       {showWelcome && (
         <WelcomeOverlay onComplete={() => setShowWelcome(false)} />
       )}
+      <OnboardingProvider
+        key={currentScreen}
+        moduleId={currentScreen}
+        userKey={onboardingUserKey}
+        isAdmin={isAdminUser}
+        enabled={!showWelcome}
+        forceShow={isOnboardingTestUser}
+        isLastModule={currentScreen === onboardingPreviewOrder[onboardingPreviewOrder.length - 1]}
+        onTourFinished={handlePreviewNext}
+        onTourFinalized={handleFinalizeOnboarding}
+      />
       <AnimatePresence mode="wait" custom={transitionType}>
         <motion.div
           key={currentScreen}
@@ -1213,6 +1258,7 @@ export default function App() {
         </motion.div>
       </AnimatePresence>
     </div>
+    </MotionConfig>
   );
 }
 

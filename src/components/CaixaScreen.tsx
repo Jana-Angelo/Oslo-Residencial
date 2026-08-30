@@ -267,7 +267,7 @@ export default function CaixaScreen({
   return (
     <div className="min-h-screen bg-[#FBF9F6] flex flex-col pb-20 md:pb-0 md:pl-64">
       
-      <Sidebar activeScreen="caixa" isAdmin={true} onNavigate={onNavigate} brand="Oslo Admin" />
+      <Sidebar activeScreen="caixa" isAdmin={true} onNavigate={onNavigate} brand="Oslo Portal" />
       <MobileHeader
         title="Caixa do Prédio"
         subtitle="Financeiro"
@@ -290,7 +290,7 @@ export default function CaixaScreen({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
           {/* Card 1: Saldo em Conta */}
-          <div className="bg-emerald-50/30 border border-[#EAE3D5] border-l-4 border-l-emerald-500 rounded-2xl p-6 shadow-sm space-y-2 relative">
+          <div data-onboarding="caixa:saldo" className="bg-emerald-50/30 border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-2 relative">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold tracking-widest text-[#8C7364] uppercase block">
                 Saldo em Conta
@@ -346,7 +346,7 @@ export default function CaixaScreen({
           </div>
 
           {/* Card 2: Total em Aberto */}
-          <div className="bg-[#8C7364] text-white border border-[#8C7364] rounded-2xl p-6 shadow-md space-y-2 relative">
+          <div data-onboarding="caixa:total_aberto" className="bg-[#8C7364] text-white border border-[#8C7364] rounded-2xl p-6 shadow-md space-y-2 relative">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold tracking-widest text-white/80 uppercase block">
                 Total em Aberto
@@ -411,7 +411,7 @@ export default function CaixaScreen({
         </div>
 
         {/* Monthly Flow Chart */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
+        <div data-onboarding="caixa:fluxo_mensal" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="font-extrabold text-sm text-[#3E342F] uppercase tracking-wider font-display">
               Fluxo Mensal
@@ -600,7 +600,7 @@ export default function CaixaScreen({
         </div>
 
         {/* Expenses by Category progress bars */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
+        <div data-onboarding="caixa:despesas_categoria" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-5">
           <h3 className="font-extrabold text-sm text-[#3E342F] uppercase tracking-wider font-display">
             Despesas por Categoria
           </h3>
@@ -695,7 +695,7 @@ export default function CaixaScreen({
         </div>
 
         {/* Pagamentos Pendentes Table */}
-        <div className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
+        <div data-onboarding="caixa:pagamentos" className="bg-white border border-[#EAE3D5] rounded-2xl p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-[#F5F2EB] pb-3">
             <h3 className="font-extrabold text-sm text-[#3E342F] uppercase tracking-wider font-display">
               Pagamentos Pendentes
@@ -868,6 +868,7 @@ export default function CaixaScreen({
                         <td className="py-3.5 text-right font-bold text-[#8C7364]">{formatCurrency(payment.amount)}</td>
                         <td className="py-3.5 text-center">
                           <button 
+                            data-onboarding="caixa:pag_pago"
                             onClick={() => handleMarkPaymentAsPaid(payment.id)}
                             className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-colors border border-emerald-200"
                             title="Marcar como pago"

@@ -5,7 +5,7 @@ const URL_REGEX = /(https?:\/\/[^\s<>"')\]]+)/g;
 export function LinkifiedText({ text, className }: { text: string; className?: string }) {
   if (!text) return null;
 
-  const parts: (string | JSX.Element)[] = [];
+  const parts: React.ReactNode[] = [];
   let lastIndex = 0;
 
   let match: RegExpExecArray | null;

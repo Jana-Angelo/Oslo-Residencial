@@ -28,7 +28,7 @@ export default function DiscoveryColumn({
   return (
     <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
       {/* Trending */}
-      <div className="bg-white border border-[#EFEBE7] rounded-2xl p-5 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
+      <div data-onboarding="indica_apt:em_alta" className="bg-white border border-[#EFEBE7] rounded-2xl p-5 shadow-[0_2px_16px_rgba(58,38,16,0.05)]">
         <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">🔥</span>
@@ -143,7 +143,7 @@ export default function DiscoveryColumn({
       </div>
 
       {/* Community invite */}
-      <div className="bg-[#8C7364] border border-[#7A6355] rounded-2xl p-6 text-white shadow-sm overflow-hidden">
+      <div data-onboarding="indica_apt:rede_confianca" className="bg-[#8C7364] border border-[#7A6355] rounded-2xl p-6 text-white shadow-sm overflow-hidden">
         <div className="flex items-center gap-2 mb-3">
           <Users className="w-4 h-4 text-[#E8E2DC]" />
           <h3 className="text-[10px] font-bold tracking-widest uppercase text-[#E8E2DC]">Rede de confiança</h3>
