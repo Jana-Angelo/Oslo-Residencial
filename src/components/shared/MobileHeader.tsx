@@ -5,6 +5,7 @@ import {
   ChevronDown,
   User,
 } from 'lucide-react';
+import InstallPWAButton from './InstallPWAButton';
 
 export type NavScreen = 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil' | 'ocorrencias';
 
@@ -98,7 +99,7 @@ export default function MobileHeader({ title, subtitle, userProfile, onNavigate,
                 </div>
                 <div className="p-1.5 flex flex-col gap-0.5">
                   <button onClick={() => { setIsProfileOpen(false); onNavigate('perfil', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">Meu perfil</button>
-                  <button onClick={() => { setIsProfileOpen(false); onNavigate('indica_apt', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-[#6E6157] hover:bg-[#F5F2EB] cursor-pointer">IndicaApt</button>
+                  <InstallPWAButton onClose={() => setIsProfileOpen(false)} />
                   <div className="h-[1px] bg-[#EAE3D5] my-1" />
                   <button onClick={() => { setIsProfileOpen(false); onNavigate('login', 'none'); }} className="w-full text-left px-3 py-2.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer">Sair do Portal</button>
                 </div>

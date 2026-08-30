@@ -9,6 +9,7 @@ import {
   CreditCard,
   LogOut,
 } from 'lucide-react';
+import InstallPWAButton from './InstallPWAButton';
 
 export type NavScreen = 'login' | 'caixa' | 'avisos' | 'dashboard' | 'indica_apt' | 'perfil' | 'ocorrencias';
 
@@ -60,7 +61,8 @@ export default function Sidebar({ activeScreen, isAdmin, onNavigate, brand = 'Os
         })}
       </nav>
 
-      <div className="border-t border-[#EAE3D5] pt-4 mt-auto">
+      <div className="border-t border-[#EAE3D5] pt-4 mt-auto space-y-0.5">
+        <InstallPWAButton />
         <button
           onClick={() => onNavigate('login', 'none')}
           className="w-full px-4 py-2 text-left text-xs font-bold uppercase text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
