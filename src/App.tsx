@@ -123,11 +123,19 @@ export default function App() {
   const [recommendationsLoading, setRecommendationsLoading] = useState(false);
   const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
 
+  const hideSplash = useCallback(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.classList.add('fade-out');
+      setTimeout(() => splash.remove(), 400);
+    }
+  }, []);
 
   useEffect(() => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey || supabaseUrl === 'YOUR_SUPABASE_PROJECT_URL') {
+      hideSplash();
       return;
     }
 
@@ -148,7 +156,10 @@ export default function App() {
         } catch {}
         setCurrentScreen(screen);
       }
-    }).catch(() => {});
+      hideSplash();
+    }).catch(() => {
+      hideSplash();
+    });
 
     const {
       data: { subscription },
@@ -171,9 +182,18 @@ export default function App() {
       } else {
         setCurrentScreen('login');
       }
+      hideSplash();
     });
 
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const splash = document.getElementById('splash-screen');
+      if (splash) splash.remove();
+    }, 10000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const fetchProfile = async (userId: string) => {

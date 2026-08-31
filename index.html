@@ -16,9 +16,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #FFFFFF url('/images/splash.png') center center / contain no-repeat;
+        transition: opacity 0.4s ease-out;
+      }
+      #splash-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash-screen { transition: none; }
+      }
+    </style>
   </head>
   <body class="bg-[#FBF9F6] text-[#3E342F] antialiased">
-    <div id="root"></div>
+    <div id="root">
+      <div id="splash-screen"></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
